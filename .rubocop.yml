@@ -1,0 +1,26 @@
+# See all options in these files:
+  # https://github.com/bbatsov/rubocop/blob/master/config/default.yml
+  # https://github.com/bbatsov/rubocop/blob/master/config/enabled.yml
+  # https://github.com/bbatsov/rubocop/blob/master/config/disabled.yml
+
+# run bundle exec rubocop -D to see what cop is reporting
+
+# If you want to skip the check for line length in a specific case do:
+# rubocop:disable LineLength
+# superlong-line-with-unavoidable-excesive-length
+# rubocop:enable LineLength
+
+AllCops:
+  TargetRubyVersion: 2.3
+  Exclude:
+    - bin/*
+    - Rakefile
+
+Documentation:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 120
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
