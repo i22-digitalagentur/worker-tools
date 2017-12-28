@@ -19,6 +19,11 @@ AllCops:
 Documentation:
   Enabled: false
 
+Metrics/BlockLength:
+  Exclude:
+    - test/**/*
+    - ./*.gemspec
+
 Metrics/LineLength:
   Max: 120
 
