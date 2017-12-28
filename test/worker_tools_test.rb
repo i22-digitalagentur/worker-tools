@@ -1,13 +1,11 @@
 require 'test_helper'
 
-class WorkerToolsTest < Minitest::Test
-  def test_that_it_has_a_version_number
+describe WorkerTools do
+  it 'has a version number' do
     refute_nil ::WorkerTools::VERSION
   end
 
-  describe 'models and schema' do
-    it 'should be loaded' do
-      assert Import.create(kind: 'foo')
-    end
+  it 'models and schema should be loaded' do
+    assert Import.create(kind: 'foo')
   end
 end
