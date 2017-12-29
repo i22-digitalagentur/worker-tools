@@ -121,9 +121,13 @@ module WorkerTools
       mapping
     end
 
+    def csv_file_path
+      model.attachment.path.to_s
+    end
+
     def csv_input_foreach
       @csv_input_rows ||= begin
-        csv_rows_enum = CSV.foreach(model.attachment.path.to_s, csv_input_csv_options)
+        csv_rows_enum = CSV.foreach(csv_file_path, csv_input_csv_options)
         csv_input_columns_check(csv_rows_enum)
         mapping_order = csv_input_mapping_order(csv_rows_enum.first)
         cleanup_method = method(:cvs_input_value_cleanup)
