@@ -78,4 +78,17 @@ describe WorkerTools::Basics do
       assert import.failed?
     end
   end
+
+  describe '#finalize' do
+    it 'saves information into the model and sets the state to complete' do
+      import = create_import
+      importer = Importer.new
+      importer.model = import
+      importer.information = 'details'
+
+      importer.send(:finalize)
+      assert import.complete?
+      assert_equal 'details', import.information
+    end
+  end
 end
