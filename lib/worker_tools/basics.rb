@@ -19,6 +19,10 @@ module WorkerTools
       raise "model_kind has to be defined in #{self}"
     end
 
+    def run
+      raise "run has to be defined in #{self}"
+    end
+
     def perform(model_id = nil)
       @model_id = model_id
       wrappers = [:with_basic_wrapper]

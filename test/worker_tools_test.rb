@@ -6,6 +6,6 @@ describe WorkerTools do
   end
 
   it 'models and schema should be loaded' do
-    assert Import.create(kind: 'foo')
+    assert create_import
   end
 end
