@@ -10,7 +10,7 @@ describe WorkerTools::Recorder do
     end
 
     def model_kind
-      'foo'
+      'foo/test'
     end
 
     def run; end
@@ -34,7 +34,7 @@ describe WorkerTools::Recorder do
     exception.stubs(:backtrace).returns(['foo', 'hoo'])
 
     log_path = Gem::Specification.find_by_name('worker_tools').gem_dir
-    filename = "/#{importer.model_kind}_#{importer.model_class.name.underscore.tr('/', '_')}.log"
+    filename = "/foo_test_#{importer.model_class.name.underscore.tr('/', '_')}.log"
 
     importer.stubs(:log_directory).returns(log_path)
     importer.perform(import)

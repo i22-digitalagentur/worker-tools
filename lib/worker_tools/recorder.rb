@@ -20,7 +20,7 @@ module WorkerTools
     end
 
     def add_log(message, level = :info)
-      log_file_name = "#{model_kind}_#{model_class.name.underscore.tr('/', '_')}.log"
+      log_file_name = "#{model_kind.underscore.tr('/', '_')}_#{model_class.name.underscore.tr('/', '_')}.log"
       @logger ||= Logger.new(File.join(log_directory, log_file_name))
       @logger.public_send(level, message)
     end
