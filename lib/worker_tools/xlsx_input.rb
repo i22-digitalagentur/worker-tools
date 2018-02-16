@@ -1,3 +1,5 @@
+require 'roo'
+
 module WorkerTools
   module XlsxInput
     # If an array is provided, the names will be used as the row keys, the row
@@ -103,29 +105,41 @@ module WorkerTools
       mapping
     end
 
-    def xlsx_input_foreach
-      @xlsx_input_foreach ||= begin
-        spreadsheet = Roo::Excelx.new(model.attachment.path.to_s)
-        xlsx_rows_enum = spreadsheet.each_row_streaming(sheet: spreadsheet.sheets.first, pad_cells: true)
+    def xlsx_input_file_path
+      model.attachment.path.to_s
+    end
 
-        xlsx_input_columns_check(xlsx_rows_enum)
-        mapping_order = xlsx_input_mapping_order(xlsx_rows_enum.first)
-        cleanup_method = method(:xlsx_input_value_cleanup)
-
-        WorkerXlsxInputForeach.new(xlsx_rows_enum, mapping_order, cleanup_method)
+    def xlsx_rows_enum
+      @xlsx_rows_enum ||= begin
+        spreadsheet = Roo::Excelx.new(xlsx_input_file_path)
+        spreadsheet.each_row_streaming(sheet: spreadsheet.sheets.first, pad_cells: true)
       end
     end
 
-    class WorkerXlsxInputForeach
+    def xlsx_input_foreach
+      @xlsx_input_foreach ||= begin
+        xlsx_input_columns_check(xlsx_rows_enum)
+
+        XlsxInputForeach.new(
+          rows_enum: xlsx_rows_enum,
+          mapping_order: xlsx_input_mapping_order(xlsx_rows_enum.first),
+          cleanup_method: method(:xlsx_input_value_cleanup)
+        )
+      end
+    end
+
+    class XlsxInputForeach
       include Enumerable
 
-      def initialize(rows_enum, mapping_order, cleanup_method)
+      def initialize(rows_enum:, mapping_order:, cleanup_method:)
         @rows_enum = rows_enum
         @mapping_order = mapping_order
         @cleanup_method = cleanup_method
       end
 
       def each
+        return enum_for(:each) unless block_given?
+
         @rows_enum.with_index.each do |values, index|
           next if index.zero? # headers
           yield values_to_row(values)
