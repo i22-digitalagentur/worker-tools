@@ -1,19 +1,8 @@
 require 'test_helper'
 
 describe WorkerTools::CsvInput do
-  class Foo
+  class FooWithoutCsvInputColumns
     include WorkerTools::CsvInput
-  end
-
-  class FooCorrectCsvInput
-    include WorkerTools::CsvInput
-
-    def csv_input_columns
-      {
-        col_1: 'Col 1',
-        col_3: 'Col 3'
-      }
-    end
   end
 
   class FooWithoutHeaders
@@ -28,12 +17,23 @@ describe WorkerTools::CsvInput do
     end
   end
 
+  class Foo
+    include WorkerTools::CsvInput
+
+    def csv_input_columns
+      {
+        col_1: 'Col 1',
+        col_3: 'Col 3'
+      }
+    end
+  end
+
   def setup
-    @klass = FooCorrectCsvInput.new
+    @klass = Foo.new
   end
 
   it 'needs csv_input_columns to be defined' do
-    err = assert_raises(RuntimeError) { Foo.new.csv_input_columns }
+    err = assert_raises(RuntimeError) { FooWithoutCsvInputColumns.new.csv_input_columns }
     assert_includes err.message, 'csv_input_columns has to be defined in'
   end
 
@@ -76,7 +76,7 @@ describe WorkerTools::CsvInput do
         assert_includes err.message, 'The number of columns'
       end
 
-      it 'successfully check column amout' do
+      it 'successfully checks the amount of columns' do
         @klass.stubs(:csv_input_columns).returns(%w[foo])
         csv_enum = [%w[foo], %w[test]]
         assert_nil @klass.csv_input_columns_check(csv_enum)
@@ -84,7 +84,7 @@ describe WorkerTools::CsvInput do
     end
 
     describe 'csv_input_columns is a hash' do
-      it 'successfully check column amout' do
+      it 'successfully checks the amount of columns' do
         csv_enum = [['Col 1', 'Col 3'], %w[test test2]]
         assert_nil @klass.csv_input_columns_check(csv_enum)
       end
