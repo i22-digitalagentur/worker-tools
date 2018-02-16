@@ -94,14 +94,6 @@ module WorkerTools
     # Ex: csv_input_columns: {tenant: 'Mandant', area: 'Bereich'}
     #     headers: ['Bereich', 'Mandant']
     #     =>  { tenant: 1, area: 0}
-    # def csv_input_mapping_order(header_names)
-    #   return unless csv_input_columns.is_a?(Hash)
-    #   filtered_column_names = header_names.map { |n| csv_input_header_normalized(n) }
-    #   csv_input_columns.each_with_object({}) do |(k, v), h|
-    #     h[k] = filtered_column_names.index(csv_input_header_normalized(v))
-    #   end
-    # end
-
     def csv_input_mapping_order(header_names)
       return csv_input_columns.map.with_index { |n, i| [n, i] }.to_h if csv_input_columns.is_a?(Array)
       csv_input_mapping_order_for_hash(header_names)
