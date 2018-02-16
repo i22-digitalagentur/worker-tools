@@ -2,7 +2,7 @@ require 'test_helper'
 
 describe WorkerTools::CsvOutput do
   class Foo
-      include WorkerTools::CsvOutput
+    include WorkerTools::CsvOutput
   end
 
   it 'needs csv_output_column_headers to be defined' do
@@ -45,7 +45,7 @@ describe WorkerTools::CsvOutput do
             col_1: 'cell_2.1',
             col_2: 'cell_2.2',
             col_3: 'cell_2.3'
-          },
+          }
         ]
       end
 
@@ -70,8 +70,8 @@ describe WorkerTools::CsvOutput do
     end
 
     it 'csv_output_row_values should return only targeted values' do
-      assert_equal %w(cell_1.1ä cell_1.2ü), @klass.csv_output_row_values(@klass.csv_output_entries.first)
-      assert_equal %w(cell_2.1 cell_2.2), @klass.csv_output_row_values(@klass.csv_output_entries.second)
+      assert_equal %w[cell_1.1ä cell_1.2ü], @klass.csv_output_row_values(@klass.csv_output_entries.first)
+      assert_equal %w[cell_2.1 cell_2.2], @klass.csv_output_row_values(@klass.csv_output_entries.second)
     end
 
     it 'successful writing of csv file' do
@@ -123,7 +123,7 @@ describe WorkerTools::CsvOutput do
 
       assert_equal "Col 1;Col 2\ncell_1.1ä;cell_1.2ü\ncell_2.1;cell_2.2\n", content
 
-      FileUtils.rm_rf('foo')  # cleaning path
+      FileUtils.rm_rf('foo') # cleaning path
     end
   end
 end

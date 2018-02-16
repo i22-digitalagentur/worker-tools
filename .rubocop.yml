@@ -26,6 +26,12 @@ Metrics/BlockLength:
 
 Metrics/LineLength:
   Max: 120
+  Exclude:
+    - test/**/*
+
+Metrics/MethodLength:
+  Exclude:
+    - test/**/*
 
 Style/FrozenStringLiteralComment:
   Enabled: false

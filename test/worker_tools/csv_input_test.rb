@@ -2,7 +2,7 @@ require 'test_helper'
 
 describe WorkerTools::CsvInput do
   class Foo
-      include WorkerTools::CsvInput
+    include WorkerTools::CsvInput
   end
 
   class FooCorrectCsvInput
@@ -58,35 +58,35 @@ describe WorkerTools::CsvInput do
   describe '#csv_input_columns_check' do
     describe 'csv_input_columns is an array' do
       it 'raise an exception if column amount differs' do
-        @klass.stubs(:csv_input_columns).returns(%w(foo))
-        csv_enum = [ %w(foo foo2), %w(test test2) ]
+        @klass.stubs(:csv_input_columns).returns(%w[foo])
+        csv_enum = [%w[foo foo2], %w[test test2]]
         err = assert_raises(RuntimeError) { @klass.csv_input_columns_check(csv_enum) }
         assert_includes err.message, 'The number of columns'
       end
 
       it 'successfully check column amout' do
-        @klass.stubs(:csv_input_columns).returns(%w(foo))
-        csv_enum = [ %w(foo), %w(test) ]
+        @klass.stubs(:csv_input_columns).returns(%w[foo])
+        csv_enum = [%w[foo], %w[test]]
         assert_nil @klass.csv_input_columns_check(csv_enum)
       end
     end
 
     describe 'csv_input_columns is a hash' do
       it 'successfully check column amout' do
-        csv_enum = [ ['Col 1', 'Col 3'], %w(test test2) ]
+        csv_enum = [['Col 1', 'Col 3'], %w[test test2]]
         assert_nil @klass.csv_input_columns_check(csv_enum)
       end
     end
 
     describe 'sent exception indepentend from csv_input_columns type' do
       it 'should raise on duplicated columns' do
-        csv_enum = [ %w(foo foo Col\ 1 Col\ 3), %w(test test2 tes test) ]
+        csv_enum = [%w[foo foo Col\ 1 Col\ 3], %w[test test2 tes test]]
         err = assert_raises(RuntimeError) { @klass.csv_input_columns_check(csv_enum) }
         assert_includes err.message, 'The file contains duplicated columns:'
       end
 
       it 'should raise on required but not given columns' do
-        csv_enum = [ ['Col 1'], %w(test) ]
+        csv_enum = [['Col 1'], %w[test]]
         err = assert_raises(RuntimeError) { @klass.csv_input_columns_check(csv_enum) }
         assert_includes err.message, 'Some columns are missing:'
       end
