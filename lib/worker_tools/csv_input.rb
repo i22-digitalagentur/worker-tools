@@ -117,30 +117,44 @@ module WorkerTools
       model.attachment.path.to_s
     end
 
-    def csv_input_foreach
-      @csv_input_rows ||= begin
-        csv_rows_enum = CSV.foreach(csv_input_file_path, csv_input_csv_options)
-        csv_input_columns_check(csv_rows_enum)
-        mapping_order = csv_input_mapping_order(csv_rows_enum.first)
-        cleanup_method = method(:cvs_input_value_cleanup)
+    def csv_rows_enum
+      @csv_rows_enum ||= CSV.foreach(csv_input_file_path, csv_input_csv_options)
+    end
 
-        WorkerCsvInputForeach.new(csv_rows_enum, csv_input_columns, mapping_order, cleanup_method)
+    def csv_input_headers_present
+      true
+    end
+
+    def csv_input_foreach
+      @csv_input_foreach ||= begin
+        csv_input_columns_check(csv_rows_enum)
+
+        CsvInputForeach.new(
+          rows_enum: csv_rows_enum,
+          input_columns: csv_input_columns,
+          mapping_order: csv_input_mapping_order(csv_rows_enum.first),
+          cleanup_method: method(:cvs_input_value_cleanup),
+          headers_present: csv_input_headers_present
+        )
       end
     end
 
-    class WorkerCsvInputForeach
+    class CsvInputForeach
       include Enumerable
 
-      def initialize(rows_enum, input_columns, mapping_order, cleanup_method)
+      def initialize(rows_enum:, input_columns:, mapping_order:, cleanup_method:, headers_present:)
         @rows_enum = rows_enum
         @input_columns = input_columns
         @mapping_order = mapping_order
         @cleanup_method = cleanup_method
+        @headers_present = headers_present
       end
 
       def each
+        return enum_for(:each) unless block_given?
+
         @rows_enum.with_index.each do |values, index|
-          next if index.zero? # headers
+          next if index.zero? && @headers_present
           yield values_to_row(values)
         end
       end
@@ -151,11 +165,13 @@ module WorkerTools
       end
 
       def values_to_row_according_to_mapping(values)
-        @mapping_order.each_with_object({}) { |(k, v), h| h[k] = @cleanup_method.call(values[v]) }
+        @mapping_order.each_with_object(HashWithIndifferentAccess.new) do |(k, v), h|
+          h[k] = @cleanup_method.call(values[v])
+        end
       end
 
       def values_to_row_according_to_position(values)
-        @input_columns.map.with_index { |c, i| [c, @cleanup_method.call(values[i])] }.to_h
+        @input_columns.map.with_index { |c, i| [c, @cleanup_method.call(values[i])] }.to_h.with_indifferent_access
       end
     end
   end
