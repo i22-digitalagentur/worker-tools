@@ -16,6 +16,16 @@ describe WorkerTools::Recorder do
     def run; end
   end
 
+  class StandAloneWithLogging
+    include WorkerTools::Recorder
+
+    def perform
+      with_logging do
+        raise 'Some Error'
+      end
+    end
+  end
+
   it 'basics#perform with record extension calls record_fail when exceptions' do
     import = create_import
     importer = ImporterWithRecorder.new
@@ -32,9 +42,8 @@ describe WorkerTools::Recorder do
     importer = ImporterWithRecorder.new
     exception = Exception.new('hello world')
     exception.stubs(:backtrace).returns(%w[foo hoo])
-
-    log_path = test_gem_path
-    filename = "/foo_test_#{importer.model_class.name.underscore.tr('/', '_')}.log"
+    log_path = test_tmp_path
+    filename = 'importer_with_recorder.log'
 
     importer.stubs(:log_directory).returns(log_path)
     importer.perform(import)
@@ -44,8 +53,20 @@ describe WorkerTools::Recorder do
     assert_includes import.information, 'hello world'
     assert_includes import.information, "Backtrace:\nfoo\n\thoo\n"
 
-    f = File.new(log_path + filename).read
-    assert_includes f, 'hello world'
-    assert_includes f, "Backtrace:\nfoo\n\thoo\n"
+    log_content = File.open(File.join(log_path, filename)).read
+    assert_includes log_content, 'hello world'
+    assert_includes log_content, "Backtrace:\nfoo\n\thoo\n"
+  end
+
+  it 'should be possible to use the recorder in isolation without a model' do
+    importer = StandAloneWithLogging.new
+    log_path = test_tmp_path
+    filename = 'stand_alone_with_logging.log'
+    importer.stubs(:log_directory).returns(log_path)
+
+    assert_raises(StandardError) { importer.perform }
+
+    log_content = File.open(File.join(log_path, filename)).read
+    assert_includes log_content, 'Some Error'
   end
 end
