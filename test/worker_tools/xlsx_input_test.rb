@@ -89,7 +89,7 @@ describe WorkerTools::XlsxInput do
 
   describe '#xlsx_input_foreach' do
     it 'should run by default' do
-      @klass.stubs(:xlsx_input_file_path).returns(Gem::Specification.find_by_name('worker_tools').gem_dir + '/test/fixtures/sample.xlsx')
+      @klass.stubs(:xlsx_input_file_path).returns(test_gem_path + '/test/fixtures/sample.xlsx')
       content = []
       @klass.xlsx_input_foreach.each { |row| content << row }
       assert_equal ({ 'col_1' => 'cell_1.1', 'col_3' => 'cell_1.3' }), content.first
@@ -97,7 +97,7 @@ describe WorkerTools::XlsxInput do
     end
 
     it 'should run where all columns are read for hash' do
-      @klass.stubs(:xlsx_input_file_path).returns(Gem::Specification.find_by_name('worker_tools').gem_dir + '/test/fixtures/sample.xlsx')
+      @klass.stubs(:xlsx_input_file_path).returns(test_gem_path + '/test/fixtures/sample.xlsx')
       @klass.stubs(:xlsx_input_include_other_columns).returns(true)
       content = []
       @klass.xlsx_input_foreach.each { |row| content << row }

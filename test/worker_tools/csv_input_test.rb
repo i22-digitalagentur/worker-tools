@@ -107,7 +107,7 @@ describe WorkerTools::CsvInput do
 
   describe '#csv_input_foreach' do
     it 'should run by default' do
-      @klass.stubs(:csv_input_file_path).returns(Gem::Specification.find_by_name('worker_tools').gem_dir + '/test/fixtures/sample.csv')
+      @klass.stubs(:csv_input_file_path).returns(test_gem_path + '/test/fixtures/sample.csv')
       content = []
       @klass.csv_input_foreach.each { |row| content << row }
       assert_equal ({ 'col_1' => 'cell_1.1', 'col_3' => 'cell_1.3' }), content.first
@@ -115,7 +115,7 @@ describe WorkerTools::CsvInput do
     end
 
     it 'should run where all columns are read for hash' do
-      @klass.stubs(:csv_input_file_path).returns(Gem::Specification.find_by_name('worker_tools').gem_dir + '/test/fixtures/sample.csv')
+      @klass.stubs(:csv_input_file_path).returns(test_gem_path + '/test/fixtures/sample.csv')
       @klass.stubs(:csv_input_include_other_columns).returns(true)
       content = []
       @klass.csv_input_foreach.each { |row| content << row }
@@ -125,7 +125,7 @@ describe WorkerTools::CsvInput do
 
     it 'should work with files without headers' do
       klass = FooWithoutHeaders.new
-      klass.stubs(:csv_input_file_path).returns(Gem::Specification.find_by_name('worker_tools').gem_dir + '/test/fixtures/sample_without_headers.csv')
+      klass.stubs(:csv_input_file_path).returns(test_gem_path + '/test/fixtures/sample_without_headers.csv')
 
       content = klass.csv_input_foreach.to_a
       assert_equal ({ 'col_1' => 'cell_1.1', 'col_2' => 'cell_1.2', 'col_3' => 'cell_1.3' }), content.first

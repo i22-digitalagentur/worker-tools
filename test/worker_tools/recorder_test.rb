@@ -33,7 +33,7 @@ describe WorkerTools::Recorder do
     exception = Exception.new('hello world')
     exception.stubs(:backtrace).returns(%w[foo hoo])
 
-    log_path = Gem::Specification.find_by_name('worker_tools').gem_dir
+    log_path = test_gem_path
     filename = "/foo_test_#{importer.model_class.name.underscore.tr('/', '_')}.log"
 
     importer.stubs(:log_directory).returns(log_path)
@@ -47,7 +47,5 @@ describe WorkerTools::Recorder do
     f = File.new(log_path + filename).read
     assert_includes f, 'hello world'
     assert_includes f, "Backtrace:\nfoo\n\thoo\n"
-
-    FileUtils.rm(Gem::Specification.find_by_name('worker_tools').gem_dir + filename)
   end
 end
