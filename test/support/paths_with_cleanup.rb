@@ -8,6 +8,6 @@ end
 
 FileUtils.mkdir_p(test_tmp_path)
 
-def after_tests
+MiniTest::Unit.after_tests do
   FileUtils.remove_dir(test_tmp_path) if Dir.exist?(test_tmp_path)
 end
