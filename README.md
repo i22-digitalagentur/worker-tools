@@ -117,7 +117,7 @@ If you only want the logger functions, without worrying about persisting a model
     include WorkerTools::Recorder
 
     def perform
-      with_logging do
+      with_wrapper_logger do
         # do stuff
       end
     end

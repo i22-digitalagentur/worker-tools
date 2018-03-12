@@ -5,6 +5,8 @@ describe WorkerTools::Recorder do
     include WorkerTools::Basics
     include WorkerTools::Recorder
 
+    wrappers :basics, :recording
+
     def model_class
       Import
     end
@@ -20,7 +22,7 @@ describe WorkerTools::Recorder do
     include WorkerTools::Recorder
 
     def perform
-      with_logging do
+      with_wrapper_logger do
         raise 'Some Error'
       end
     end

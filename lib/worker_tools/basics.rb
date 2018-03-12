@@ -7,6 +7,14 @@ module WorkerTools
     included do
       attr_writer :model
       attr_accessor :information
+
+      def self.wrappers(*args)
+        @wrappers ||= Array(args)
+      end
+
+      def self.read_wrappers
+        @wrappers || []
+      end
     end
 
     def model_class
@@ -25,15 +33,20 @@ module WorkerTools
 
     def perform(model_id = nil)
       @model_id = model_id
-      wrappers = [:with_basic_wrapper]
-      wrappers << :with_rocketchat_error_notifier if respond_to?(:with_rocketchat_error_notifier)
-      wrappers << :with_recording if respond_to?(:with_recording)
-      with_wrappers(wrappers) do
+      with_wrappers(wrapper_methods) do
         run
       end
     end
 
-    def with_basic_wrapper(&block)
+    def wrapper_methods
+      self.class.read_wrappers.map do |wrapper|
+        symbolized_method = "with_wrapper_#{wrapper}".to_sym
+        raise "Missing wrapper #{wrapper}" unless respond_to?(symbolized_method)
+        symbolized_method
+      end
+    end
+
+    def with_wrapper_basics(&block)
       block.yield
       finalize
     # this time we do want to catch Exception to attempt to handle some of the
@@ -61,8 +74,7 @@ module WorkerTools
       @model ||= find_model
     end
 
-    def with_wrappers(*wrapper_symbols, &block)
-      wrapper_symbols.flatten!
+    def with_wrappers(wrapper_symbols, &block)
       return yield if wrapper_symbols.blank?
       current_wrapper_symbol = wrapper_symbols.shift
       send(current_wrapper_symbol) { with_wrappers(wrapper_symbols, &block) }

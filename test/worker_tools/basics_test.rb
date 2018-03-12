@@ -3,10 +3,13 @@ require 'test_helper'
 describe WorkerTools::Basics do
   class Foo
     include WorkerTools::Basics
+    wrappers
   end
 
   class Importer
     include WorkerTools::Basics
+
+    wrappers :basics
 
     def model_class
       Import
@@ -17,6 +20,36 @@ describe WorkerTools::Basics do
     end
 
     def run; end
+  end
+
+  class Wrapper
+    include WorkerTools::Basics
+
+    wrappers :basics, :foo, :bar
+
+    attr_accessor :steps
+
+    def with_wrapper_foo(&block)
+      block.yield
+      steps.push 'foo'
+    end
+
+    def with_wrapper_bar(&block)
+      block.yield
+      steps.push 'bar'
+    end
+
+    def model_class
+      Import
+    end
+
+    def model_kind
+      'foo'
+    end
+
+    def run
+      @steps = []
+    end
   end
 
   it 'needs model class, model kind, and run to be defined' do
@@ -54,6 +87,23 @@ describe WorkerTools::Basics do
       importer.expects(:create_model_if_not_available).returns(true)
       import = importer.model
       assert_instance_of Import, import
+    end
+  end
+
+  describe '#self.wrappers' do
+    it 'calls the defined wrappers in order' do
+      import = create_import
+      importer = Wrapper.new
+      importer.perform(import)
+      assert_equal %w[bar foo], importer.steps
+    end
+
+    it 'raise an exception if a wrapper method is missing ' do
+      import = create_import
+      importer = Wrapper.new
+      importer.instance_eval { undef :with_wrapper_foo }
+      exception = assert_raises(StandardError) { importer.perform(import) }
+      assert_equal 'Missing wrapper foo', exception.message
     end
   end
 
