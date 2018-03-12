@@ -162,15 +162,18 @@ end
 
 is internally handled as
 
+```ruby
 def perform(model_id)
   # set model
   with_wrapper_basics do
     run
   end
 end
+```
 
 where this wrapper method looks like
 
+```ruby
 def with_wrapper_basics(&block)
   block.yield # calls run
   # marks the import as complete
@@ -178,12 +181,14 @@ def with_wrapper_basics(&block)
   # marks the import as failed
   raise
 end
+```
 
 if we also add a wrapper to send notifications, such as
 `wrappers :basics, :rocketchat_error_notifier`
 
 the resulting nested calls would look like
 
+```ruby
 def perform(model_id)
   # set model
   with_wrapper_basics do
@@ -192,7 +197,7 @@ def perform(model_id)
     end
   end
 end
-
+```
 
 
 ## Contributing
