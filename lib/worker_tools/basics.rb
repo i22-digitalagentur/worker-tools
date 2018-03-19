@@ -9,7 +9,7 @@ module WorkerTools
       attr_accessor :information
 
       def self.wrappers(*args)
-        @wrappers ||= Array(args)
+        @wrappers ||= args.flatten
       end
 
       def self.read_wrappers
