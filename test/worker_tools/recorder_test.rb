@@ -5,7 +5,7 @@ describe WorkerTools::Recorder do
     include WorkerTools::Basics
     include WorkerTools::Recorder
 
-    wrappers :basics, :recording
+    wrappers :basics, :recorder
 
     def model_class
       Import

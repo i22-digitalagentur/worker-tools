@@ -1,6 +1,6 @@
 module WorkerTools
   module Recorder
-    def with_wrapper_recording(&block)
+    def with_wrapper_recorder(&block)
       block.yield
     # this time we do want to catch Exception to attempt to handle some of the
     # critical errors.
