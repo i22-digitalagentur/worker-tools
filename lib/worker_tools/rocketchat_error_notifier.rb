@@ -1,6 +1,6 @@
 module WorkerTools
   module RocketchatErrorNotifier
-    def with_rocketchat_error_notifier(&block)
+    def with_wrapper_rocketchat_error_notifier(&block)
       block.yield
     rescue StandardError => e
       rocketchat_error_notify(e) if rocketchat_error_notifier_enabled
