@@ -90,18 +90,48 @@ describe WorkerTools::CsvInput do
       end
     end
 
-    describe 'sent exception indepentend from csv_input_columns type' do
+    describe 'raises on duplication' do
       it 'should raise on duplicated columns' do
         csv_enum = [%w[foo foo Col\ 1 Col\ 3], %w[test test2 tes test]]
         err = assert_raises(RuntimeError) { @klass.csv_input_columns_check(csv_enum) }
         assert_includes err.message, 'The file contains duplicated columns:'
       end
+    end
 
-      it 'should raise on required but not given columns' do
-        csv_enum = [['Col 1'], %w[test]]
+    describe 'raises on missing columns' do
+      it 'should raise on missing columns' do
+        @klass.stubs(:csv_input_columns).returns(
+          col_1: 'Col 1',
+          col_2: /Col 2/i,
+          col_3: ->(name) { name.downcase == 'col 3' }
+        )
+        csv_enum = [['Col X', 'Col 2', 'Col 3'], %w[test test test]]
         err = assert_raises(RuntimeError) { @klass.csv_input_columns_check(csv_enum) }
         assert_includes err.message, 'Some columns are missing:'
+
+        csv_enum = [['Col 1', 'Col X', 'Col 3'], %w[test test test]]
+        err = assert_raises(RuntimeError) { @klass.csv_input_columns_check(csv_enum) }
+        assert_includes err.message, 'Some columns are missing:'
+
+        csv_enum = [['Col 1', 'Col 2', 'Col X'], %w[test test test]]
+        err = assert_raises(RuntimeError) { @klass.csv_input_columns_check(csv_enum) }
+        assert_includes err.message, 'Some columns are missing:'
+
+        csv_enum = [['Col 1', 'Col 2', 'Col 3'], %w[test test test]]
+        assert_nil @klass.csv_input_columns_check(csv_enum)
       end
+    end
+  end
+
+  describe '#csv_input_mapping_order_for_hash' do
+    it 'should find the matching positions' do
+      @klass.stubs(:csv_input_columns).returns(
+        col_1: 'Col 1',
+        col_2: /Col 2/i,
+        col_3: ->(name) { name.downcase == 'col 3' }
+      )
+      header_names = ['COL 3', 'CoL 2', 'Col 1']
+      assert_equal({ col_1: 2, col_2: 1, col_3: 0 }, @klass.csv_input_mapping_order_for_hash(header_names))
     end
   end
 

@@ -27,6 +27,14 @@ module WorkerTools
     # method, which takes care of extra spaces and looks for a case insentive
     # match (so 'Bereich' matches ' Bereich', 'bereich', etc.). You can override
     # that method as well.
+    #
+    # Besides matching the columns using strings, it is possible to use a regular
+    # expression or a proc:
+    # {
+    #   tenant: 'Mandant',
+    #   segment: /Segment/i,
+    #   area: ->(name) { name.downcase == 'area' }
+    # }
     def csv_input_columns
       raise "csv_input_columns has to be defined in #{self}"
     end
@@ -70,7 +78,8 @@ module WorkerTools
 
     def csv_input_columns_hash_check_missing(actual_names, expected_names)
       missing = expected_names.reject do |name|
-        actual_names.include?(csv_input_header_normalized(name))
+        matchable = name.is_a?(String) ? csv_input_header_normalized(name) : name
+        actual_names.any? { |n| case n when matchable then true end } # rubocop does not like ===
       end
       raise "Some columns are missing: #{missing}" unless missing.empty?
     end
@@ -102,10 +111,14 @@ module WorkerTools
     def csv_input_mapping_order_for_hash(header_names)
       filtered_column_names = header_names.map { |n| csv_input_header_normalized(n) }
       mapping = csv_input_columns.each_with_object({}) do |(k, v), h|
-        h[k] = filtered_column_names.index(csv_input_header_normalized(v))
+        matchable = v.is_a?(String) ? csv_input_header_normalized(v) : v
+        h[k] = filtered_column_names.index { |n| case n when matchable then true end }
       end
       return mapping unless csv_input_include_other_columns
+      csv_input_mapping_order_with_other_columns(mapping, filtered_column_names)
+    end
 
+    def csv_input_mapping_order_with_other_columns(mapping, filtered_column_names)
       positions_taken = mapping.values
       filtered_column_names.each_with_index do |header, index|
         mapping[header.to_sym] = index unless positions_taken.include?(index)
