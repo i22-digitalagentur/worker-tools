@@ -35,3 +35,8 @@ Metrics/MethodLength:
 
 Style/FrozenStringLiteralComment:
   Enabled: false
+
+# Although casecmp is more performant, downcase is more readable
+# 'Foo'.downcase.eql?('foo') vs 'Foo'.casecmp('foo').zero?
+Performance/Casecmp:
+  Enabled: false
