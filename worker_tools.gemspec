@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'activesupport'
-  spec.add_dependency 'rocketchat-notifier'
+  spec.add_dependency 'rocketchat-notifier', '>= 0.1.2'
   spec.add_dependency 'roo'
 
   spec.add_development_dependency 'activerecord'
