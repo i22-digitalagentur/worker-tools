@@ -11,9 +11,10 @@ module WorkerTools
     def xlsx_output_content
       {
         sheet1: {
-          value: 'Sheet 1',
+          label: 'Sheet 1',
           headers: xlsx_output_column_headers,
-          rows: xlsx_output_values
+          rows: xlsx_output_values,
+          column_style: xlsx_output_column_format
         }
       }
     end
@@ -47,7 +48,7 @@ module WorkerTools
       #   foo: { width: 10, text_wrap: true },
       #   bar: { width: 20, text_wrap: false }
       # }
-      false
+      {}
     end
 
     def xlsx_output_target_folder
@@ -58,22 +59,22 @@ module WorkerTools
       FileUtils.mkdir_p(xlsx_output_target_folder) unless File.directory?(xlsx_output_target_folder)
     end
 
-    def xlsx_insert_headers(spreadsheet)
-      return unless xlsx_output_column_headers
+    def xlsx_insert_headers(spreadsheet, headers)
+      return unless headers
       iterator =
-        if xlsx_output_column_headers.is_a? Hash
-          xlsx_output_column_headers.values
+        if headers.is_a? Hash
+          headers.values
         else
-          xlsx_output_column_headers
+          headers
         end
       iterator.each_with_index do |header, index|
         spreadsheet.add_cell(0, index, header.to_s)
       end
     end
 
-    def xlsx_insert_rows(spreadsheet)
-      xlsx_output_values.each_with_index do |row, row_index|
-        xlsx_iterators(row, xlsx_output_column_headers).each_with_index do |value, col_index|
+    def xlsx_insert_rows(spreadsheet, rows, headers)
+      rows.each_with_index do |row, row_index|
+        xlsx_iterators(row, headers).each_with_index do |value, col_index|
           spreadsheet.add_cell(row_index + 1, col_index, value.to_s)
         end
       end
@@ -81,32 +82,40 @@ module WorkerTools
 
     def xlsx_iterators(iterable, compare_hash = nil)
       if iterable.is_a? Hash
-        raise 'parameter compare_hash shourakeld be a hash, too.' if compare_hash.nil? || !compare_hash.is_a?(Hash)
+        raise 'parameter compare_hash should be a hash, too.' if compare_hash.nil? || !compare_hash.is_a?(Hash)
         iterable.values_at(*compare_hash.keys)
       else
         iterable
       end
     end
 
-    def xlsx_style_columns(spreadsheet)
-      return false unless xlsx_output_column_format
+    def xlsx_style_columns(spreadsheet, styles, headers)
+      return false unless headers
 
-      xlsx_iterators(xlsx_output_column_format, xlsx_output_column_headers).each_with_index do |format, index|
+      xlsx_iterators(styles, headers).each_with_index do |format, index|
         spreadsheet.change_column_width(index, format[:width])
         spreadsheet.change_text_wrap(index, format[:text_wrap])
       end
       true
     end
 
+    def xlsx_write_sheet(workbook, sheet_content, index)
+      sheet = workbook.worksheets[index]
+      sheet = workbook.add_worksheet(sheet_content[:label]) if sheet.nil?
+
+      sheet.sheet_name = sheet_content[:label]
+      xlsx_style_columns(sheet, sheet_content[:column_style], sheet_content[:headers])
+      xlsx_insert_headers(sheet, sheet_content[:headers])
+      xlsx_insert_rows(sheet, sheet_content[:rows], sheet_content[:headers])
+    end
+
     def xlsx_write_output_target
       xlsx_ensure_output_target_folder
 
       book = RubyXL::Workbook.new
-      sheet1 = book.worksheets[0]
-
-      xlsx_style_columns(sheet1)
-      xlsx_insert_headers(sheet1)
-      xlsx_insert_rows(sheet1)
+      xlsx_output_content.each_with_index do |(_, object), index|
+        xlsx_write_sheet(book, object, index)
+      end
 
       book.write xlsx_output_target
     end
