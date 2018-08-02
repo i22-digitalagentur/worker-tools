@@ -8,6 +8,16 @@ module WorkerTools
       raise "xlsx_output_target has to be defined in #{self}"
     end
 
+    def xlsx_output_content
+      {
+        sheet1: {
+          value: 'Sheet 1',
+          headers: xlsx_output_column_headers,
+          rows: xlsx_output_values
+        }
+      }
+    end
+
     def xlsx_output_values
       raise "xlsx_output_values has to be defined in #{self}"
     end
@@ -24,6 +34,20 @@ module WorkerTools
       #   bar: 'Bar Header'
       # }
       raise "xlsx_output_column_headers has to be defined in #{self}"
+    end
+
+    def xlsx_output_column_format
+      # These columns are used to set the headers, also
+      # to set the row values depending on your implementation.
+      #
+      # To ignore them set it to _false_
+      #
+      # Ex:
+      # @xlsx_output_column_format ||= {
+      #   foo: { width: 10, text_wrap: true },
+      #   bar: { width: 20, text_wrap: false }
+      # }
+      false
     end
 
     def xlsx_output_target_folder
@@ -47,20 +71,31 @@ module WorkerTools
       end
     end
 
-    def xlsx_insert_row_iterator(row)
-      if row.is_a? Hash
-        row.values_at(*xlsx_output_column_headers.keys)
-      else
-        row
-      end
-    end
-
     def xlsx_insert_rows(spreadsheet)
       xlsx_output_values.each_with_index do |row, row_index|
-        xlsx_insert_row_iterator(row).each_with_index do |value, col_index|
+        xlsx_iterators(row, xlsx_output_column_headers).each_with_index do |value, col_index|
           spreadsheet.add_cell(row_index + 1, col_index, value.to_s)
         end
       end
+    end
+
+    def xlsx_iterators(iterable, compare_hash = nil)
+      if iterable.is_a? Hash
+        raise 'parameter compare_hash shourakeld be a hash, too.' if compare_hash.nil? || !compare_hash.is_a?(Hash)
+        iterable.values_at(*compare_hash.keys)
+      else
+        iterable
+      end
+    end
+
+    def xlsx_style_columns(spreadsheet)
+      return false unless xlsx_output_column_format
+
+      xlsx_iterators(xlsx_output_column_format, xlsx_output_column_headers).each_with_index do |format, index|
+        spreadsheet.change_column_width(index, format[:width])
+        spreadsheet.change_text_wrap(index, format[:text_wrap])
+      end
+      true
     end
 
     def xlsx_write_output_target
@@ -69,6 +104,7 @@ module WorkerTools
       book = RubyXL::Workbook.new
       sheet1 = book.worksheets[0]
 
+      xlsx_style_columns(sheet1)
       xlsx_insert_headers(sheet1)
       xlsx_insert_rows(sheet1)
 

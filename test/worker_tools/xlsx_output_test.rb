@@ -41,6 +41,13 @@ describe WorkerTools::XlsxOutput do
       def xlsx_output_target
         './tmp/foo_correct.xlsx'
       end
+
+      def xlsx_output_column_format
+        {
+          a: { width: 20.0, text_wrap: true },
+          b: { width: 10.0 }
+        }
+      end
     end
 
     def setup
@@ -54,8 +61,11 @@ describe WorkerTools::XlsxOutput do
     end
 
     it 'successful writing of xlsx file' do
+      assert @klass.xlsx_output_column_format
+      @klass.expects(:xlsx_style_columns).returns(true)
+
       @klass.xlsx_write_output_target
-      assert File.exist?(@klass.xlsx_write_output_target)
+      assert File.exist?(@klass.xlsx_output_target)
       xlsx = Roo::Excelx.new('./tmp/foo_correct.xlsx')
 
       sheet = xlsx.sheet(0)
@@ -81,6 +91,13 @@ describe WorkerTools::XlsxOutput do
         ]
       end
 
+      def xlsx_output_column_format
+        {
+          a: { width: 20.0 },
+          b: { width: 10.0, text_wrap: true }
+        }
+      end
+
       def xlsx_output_target
         './tmp/foo_correct.xlsx'
       end
@@ -97,15 +114,17 @@ describe WorkerTools::XlsxOutput do
     end
 
     it 'successful writing of xlsx file' do
+      assert @klass.xlsx_output_column_format
+      @klass.expects(:xlsx_style_columns).returns(true)
+
       @klass.xlsx_write_output_target
-      assert File.exist?(@klass.xlsx_write_output_target)
+      assert File.exist?(@klass.xlsx_output_target)
       xlsx = Roo::Excelx.new('./tmp/foo_correct.xlsx')
 
       sheet = xlsx.sheet(0)
       assert sheet
       assert_equal sheet.row(1), %w[foo1 goo2]
       assert_equal sheet.row(2), %w[test1 testA]
-      assert_equal sheet.row(3), %w[test2 testB]
     end
   end
 end
