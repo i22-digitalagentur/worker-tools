@@ -93,6 +93,7 @@ module WorkerTools
       return false unless headers
 
       xlsx_iterators(styles, headers).each_with_index do |format, index|
+        next unless format
         spreadsheet.change_column_width(index, format[:width])
         spreadsheet.change_text_wrap(index, format[:text_wrap])
       end
