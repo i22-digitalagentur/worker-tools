@@ -29,6 +29,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rocketchat-notifier', '>= 0.1.2'
   spec.add_dependency 'roo'
   spec.add_dependency 'rubyXL'
+  spec.add_dependency 'slack-notifier'
 
   spec.add_development_dependency 'activerecord'
   spec.add_development_dependency 'bundler'

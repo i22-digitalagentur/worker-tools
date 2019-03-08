@@ -126,7 +126,11 @@ If you only want the logger functions, without worrying about persisting a model
 
 ## Module RocketchatErrorNotifier
 
-[recorder](/lib/worker_tools/rocketchat_error_notifier.rb)
+[rocketchat_error_notifier](/lib/worker_tools/rocketchat_error_notifier.rb)
+
+## Module SlackErrorNotifier
+
+[slack_error_notifier](/lib/worker_tools/slack_error_notifier.rb)
 
 ## Module CSV Input
 
