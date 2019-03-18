@@ -30,11 +30,7 @@ module WorkerTools
     end
 
     def slack_error_notifier_username
-      "#{Rails.application.class.parent_name} / WorkerToolsNotifer "
-    end
-
-    def slack_error_notifier_text
-      "*#{slack_error_notifier_message}* (#{Rails.env})"
+      'Notifier'
     end
 
     def slack_error_notifier_receivers
@@ -64,7 +60,7 @@ module WorkerTools
     end
 
     def slack_error_notifier_error_details(error)
-      error.backtrace[0..10].join("\n")
+      error.backtrace[0..2].join("\n")
     end
 
     def slack_error_notifier_message
@@ -76,11 +72,19 @@ module WorkerTools
 
     def slack_error_notifier_attachments(error)
       [
+        { color: slack_error_notifier_attachments_color, fields: slack_error_notifier_attachments_fields },
         {
           title: [error.class, error.message].join(' : '),
-          text: slack_error_notifier_error_details(error),
-          color: slack_error_notifier_attachments_color
+          color: slack_error_notifier_attachments_color,
+          text: slack_error_notifier_error_details(error)
         }
+      ]
+    end
+
+    def slack_error_notifier_attachments_fields
+      [
+        { title: 'Application', value: Rails.application.class.parent_name, short: true },
+        { title: 'Environment', value: Rails.env, short: true }
       ]
     end
 
@@ -93,7 +97,7 @@ module WorkerTools
         username: slack_error_notifier_username,
         channel: slack_error_notifier_channel,
         icon_emoji: slack_error_notifier_emoji,
-        text: slack_error_notifier_text,
+        text: "*#{slack_error_notifier_message}*",
         attachments: slack_error_notifier_attachments(error)
       )
     end
