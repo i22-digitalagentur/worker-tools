@@ -42,6 +42,7 @@ module WorkerTools
       self.class.read_wrappers.map do |wrapper|
         symbolized_method = "with_wrapper_#{wrapper}".to_sym
         raise "Missing wrapper #{wrapper}" unless respond_to?(symbolized_method)
+
         symbolized_method
       end
     end
@@ -76,6 +77,7 @@ module WorkerTools
 
     def with_wrappers(wrapper_symbols, &block)
       return yield if wrapper_symbols.blank?
+
       current_wrapper_symbol = wrapper_symbols.shift
       send(current_wrapper_symbol) { with_wrappers(wrapper_symbols, &block) }
     end
@@ -87,6 +89,7 @@ module WorkerTools
       return @model_id if @model_id.is_a?(model_class)
       return model_class.find(@model_id) if @model_id
       raise 'Model not available' unless create_model_if_not_available
+
       t = model_class.new
       t.kind = model_kind if t.respond_to?(:kind=)
       t.save!(validate: false)

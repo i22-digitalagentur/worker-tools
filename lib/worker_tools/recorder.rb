@@ -45,11 +45,13 @@ module WorkerTools
 
     def format_log_message(message)
       return error_to_text(message, log_error_trace_lines) if message.is_a?(Exception)
+
       message
     end
 
     def format_info_message(message)
       return error_to_text(message, info_error_trace_lines) if message.is_a?(Exception)
+
       message
     end
 
