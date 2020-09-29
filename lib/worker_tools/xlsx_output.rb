@@ -61,6 +61,7 @@ module WorkerTools
 
     def xlsx_insert_headers(spreadsheet, headers)
       return unless headers
+
       iterator =
         if headers.is_a? Hash
           headers.values
@@ -83,6 +84,7 @@ module WorkerTools
     def xlsx_iterators(iterable, compare_hash = nil)
       if iterable.is_a? Hash
         raise 'parameter compare_hash should be a hash, too.' if compare_hash.nil? || !compare_hash.is_a?(Hash)
+
         iterable.values_at(*compare_hash.keys)
       else
         iterable
@@ -94,6 +96,7 @@ module WorkerTools
 
       xlsx_iterators(styles, headers).each_with_index do |format, index|
         next unless format
+
         spreadsheet.change_column_width(index, format[:width])
         spreadsheet.change_text_wrap(index, format[:text_wrap])
       end

@@ -54,6 +54,7 @@ module WorkerTools
     def csv_input_columns_check(csv_rows_enum)
       # override and return true if you do not want this check to be performed
       return csv_input_columns_array_check(csv_rows_enum) if csv_input_columns.is_a?(Array)
+
       csv_input_columns_hash_check(csv_rows_enum)
     end
 
@@ -61,6 +62,7 @@ module WorkerTools
       expected_columns_length = csv_input_columns.length
       actual_columns_length = csv_rows_enum.first.length
       return if expected_columns_length == actual_columns_length
+
       raise "The number of columns (#{actual_columns_length}) is not the expected (#{expected_columns_length})"
     end
 
@@ -105,6 +107,7 @@ module WorkerTools
     #     =>  { tenant: 1, area: 0}
     def csv_input_mapping_order(header_names)
       return csv_input_columns.map.with_index { |n, i| [n, i] }.to_h if csv_input_columns.is_a?(Array)
+
       csv_input_mapping_order_for_hash(header_names)
     end
 
@@ -115,6 +118,7 @@ module WorkerTools
         h[k] = filtered_column_names.index { |n| case n when matchable then true end }
       end
       return mapping unless csv_input_include_other_columns
+
       csv_input_mapping_order_with_other_columns(mapping, filtered_column_names)
     end
 
@@ -168,12 +172,14 @@ module WorkerTools
 
         @rows_enum.with_index.each do |values, index|
           next if index.zero? && @headers_present
+
           yield values_to_row(values)
         end
       end
 
       def values_to_row(values)
         return values_to_row_according_to_mapping(values) if @mapping_order
+
         values_to_row_according_to_position(values)
       end
 

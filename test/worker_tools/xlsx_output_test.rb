@@ -172,23 +172,6 @@ describe WorkerTools::XlsxOutput do
           b: { width: 10.0 }
         }
       end
-
-      def xlsx_output_content
-        {
-          sheet_1: {
-            label: 'Test 1',
-            headers: xlsx_output_column_headers,
-            rows: xlsx_output_values,
-            column_style: xlsx_output_column_format
-          },
-          sheet_2: {
-            label: 'Test 2',
-            headers: xlsx_output_column_headers,
-            rows: xlsx_output_values,
-            column_style: xlsx_output_column_format
-          }
-        }
-      end
     end
 
     def setup
