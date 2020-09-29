@@ -60,7 +60,7 @@ module WorkerTools
     end
 
     def finalize
-      model.update_attributes!(
+      model.update!(
         state: 'complete',
         information: information
       )
