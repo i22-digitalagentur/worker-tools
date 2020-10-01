@@ -27,7 +27,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'activesupport'
-  spec.add_dependency 'rocketchat-notifier', '>= 0.1.2'
   spec.add_dependency 'roo'
   spec.add_dependency 'rubyXL'
   spec.add_dependency 'slack-notifier'
@@ -40,7 +39,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'mocha'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rake'
-  spec.add_development_dependency 'rubocop', '0.52.1'
+  spec.add_development_dependency 'rubocop', '0.71.0'
   spec.add_development_dependency 'simplecov'
   spec.add_development_dependency 'sqlite3'
 end

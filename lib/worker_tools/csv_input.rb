@@ -135,7 +135,7 @@ module WorkerTools
     end
 
     def csv_rows_enum
-      @csv_rows_enum ||= CSV.foreach(csv_input_file_path, csv_input_csv_options)
+      @csv_rows_enum ||= CSV.foreach(csv_input_file_path, **csv_input_csv_options)
     end
 
     def csv_input_headers_present

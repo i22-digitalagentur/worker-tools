@@ -124,10 +124,6 @@ If you only want the logger functions, without worrying about persisting a model
   end
 ```
 
-## Module RocketchatErrorNotifier
-
-[rocketchat_error_notifier](/lib/worker_tools/rocketchat_error_notifier.rb)
-
 ## Module SlackErrorNotifier
 
 [slack_error_notifier](/lib/worker_tools/slack_error_notifier.rb)
@@ -212,4 +208,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/i22-di
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-

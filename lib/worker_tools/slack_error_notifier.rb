@@ -83,7 +83,7 @@ module WorkerTools
 
     def slack_error_notifier_attachments_fields
       [
-        { title: 'Application', value: Rails.application.class.parent_name, short: true },
+        { title: 'Application', value: Rails.application.class.module_parent_name, short: true },
         { title: 'Environment', value: Rails.env, short: true }
       ]
     end
