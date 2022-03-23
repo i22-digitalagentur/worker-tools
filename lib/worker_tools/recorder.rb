@@ -35,7 +35,7 @@ module WorkerTools
 
     def add_info(message)
       @information ||= ''
-      information << "#{format_info_message(message)}\n"
+      @information << "#{format_info_message(message)}\n"
     end
 
     def record(message, level = :info)
