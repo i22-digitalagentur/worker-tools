@@ -1,5 +1,8 @@
 module WorkerTools
   module Recorder
+
+    counters :base
+
     def with_wrapper_recorder(&block)
       block.yield
     # this time we do want to catch Exception to attempt to handle some of the
@@ -9,6 +12,23 @@ module WorkerTools
       # rubocop:enable Lint/RescueException
       record_fail(e)
       raise
+    end
+
+    def init_counters(counter_names)
+      counter_names.map do |counter|
+        {
+          model.meta.counters["increment_skip_#{counter}"]: () => increment_counter("increment_skip_#{counter}"),
+          model.meta.counters["increment_inserts_#{counter}"]: () => increment_counter("increment_inserts_#{counter}"),
+          model.meta.counters["increment_updates_#{counter}"]: () => increment_counter("increment_updates_#{counter}"),
+          model.meta.counters["increment_deletes_#{counter}"]: () => increment_counter("increment_deletes_#{counter}"),
+          model.meta.counters["increment_failures_#{counter}"]: () => increment_counter("increment_failures_#{counter}"),
+          model.meta.counters["skip_#{counter}"]: 0,
+          model.meta.counters["inserts_#{counter}"]: 0,
+          model.meta.counters["updates_#{counter}"]: 0,
+          model.meta.counters["deletes_#{counter}"]: 0,
+          model.meta.counters["failures_#{counter}"]: 0,
+        }
+      end
     end
 
     def with_wrapper_logger(&block)
@@ -73,6 +93,10 @@ module WorkerTools
 
     def info_error_trace_lines
       20
+    end
+
+    def increment_counter(counter)
+      model.meta.counters[counter] += 1
     end
 
     def error_to_text(error, trace_lines = 20)

@@ -33,6 +33,8 @@ module WorkerTools
 
     def perform(model_id = nil)
       @model_id = model_id
+      init_counters(counters)
+
       with_wrappers(wrapper_methods) do
         run
       end
