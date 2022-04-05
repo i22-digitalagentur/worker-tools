@@ -2,17 +2,10 @@ module WorkerTools
   module Benchmark
     attr_accessor :benchmark
 
-    def measure(&block)
-      start = Time.zone.now
-      bm = Benchmark.measure(&block)
-      real = Time.zone.now - start
+    def with_wrapper_benchmark(&block)
+      @benchmark = Benchmark.measure(&block)
   
-      if Rails.env.in? %w[production staging]
-        bm.instance_variable_set(:@total, real)
-        bm.instance_variable_set(:@real, real)
-      end
-  
-      @benchmark = bm
+      model.duration = @benchmark.real.round if model.responds_to?(:duration=)
     end
   end
 end
