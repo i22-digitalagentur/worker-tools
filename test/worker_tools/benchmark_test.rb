@@ -21,17 +21,22 @@ describe WorkerTools::CustomBenchmark do
   describe '#with_wrapper_benchmark' do
     before :each do
       @import = create_import
-      @some_instance = CustomBenchmark.new
+      @importer = CustomBenchmark.new
       Benchmark.expects(:measure).returns(stub(:real => 2))
     end
 
     it 'should call benchmark.measure function' do
-      @some_instance.perform(@import)
+      @importer.perform(@import)
     end
 
     it 'should assign value to model.meta[duration]' do
-      @some_instance.perform(@import)
-      expect(@some_instance.model.meta['duration']).must_equal 2
+      @importer.perform(@import)
+      expect(@importer.model.meta['duration']).must_equal 2
+    end
+
+    it 'raise error if model.meta not exist' do
+      err = assert_raises(StandardError) { @importer.with_wrapper_benchmark }
+      assert_includes err.message, 'Model not available'
     end
   end
 end

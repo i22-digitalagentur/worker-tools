@@ -59,6 +59,7 @@ In this case the migration would be something like this:
       t.integer :state, default: 0, null: false
       t.text :information
       t.json  :options, default: {}
+      t.json :meta, default: {}
 
       t.string :attachment_file_name
       t.integer :attachment_file_size
