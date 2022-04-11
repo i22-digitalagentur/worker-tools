@@ -200,6 +200,27 @@ def perform(model_id)
 end
 ```
 
+## Counters
+
+There is a counter wrapper that you can use to add custom counters to the meta attribute. To do this, you need to complete the following tasks:
+- include WorkerTools::Counters to your class
+- add :counters to the wrappers method props
+- call counters method with your custom counters
+You can see an example below. After that, you can access your custom counters via the meta attribute.
+
+```ruby
+class MyImporter
+  include WorkerTools::Counters
+  wrappers :counters
+  counters :foo, :bar
+
+  def run
+    # do stuff
+  end
+
+  # ..
+end
+```
 
 ## Contributing
 
