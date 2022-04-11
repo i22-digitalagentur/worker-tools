@@ -206,7 +206,7 @@ There is a benchmark wrapper that you can use to record the benchmark. The only 
 
 ```ruby
 class MyImporter
-  include WorkerTools::Benchmark
+  include WorkerTools::CustomBenchmark
   wrappers :benchmark
 
   def run
