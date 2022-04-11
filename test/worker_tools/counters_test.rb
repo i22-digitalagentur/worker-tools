@@ -1,11 +1,6 @@
 require 'test_helper'
 
 describe WorkerTools::Counters do
-  class Foo
-    include WorkerTools::Basics
-    wrappers
-  end
-
   class Counter
     include WorkerTools::Basics
     include WorkerTools::Counters
@@ -57,22 +52,16 @@ describe WorkerTools::Counters do
   describe '#with_wrapper_counters' do
     before :each do
       @import = create_import
+      @importer = Counter.new
     end
 
     it 'should call reset_counters function' do
-      mocked_reset_counters = MiniTest::Mock.new
-      mocked_reset_counters.expect :call, nil
-      some_instance = Counter.new
-      some_instance.stub :reset_counters, mocked_reset_counters do
-        some_instance.reset_counters
-      end
-      some_instance.perform(@import)
-      # some_instance.verify
+      @importer.expects(:reset_counters).returns(true)
+      @importer.perform(@import)
     end
 
     it 'raise error if model.meta not exist' do
-      importer = Counter.new
-      err = assert_raises(StandardError) { importer.with_wrapper_counters }
+      err = assert_raises(StandardError) { @importer.with_wrapper_counters }
       assert_includes err.message, 'Model not available'
     end
   end
