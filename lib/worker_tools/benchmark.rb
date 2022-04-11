@@ -1,11 +1,15 @@
 module WorkerTools
-  module Benchmark
-    attr_accessor :benchmark
+  module CustomBenchmark
+    extend ActiveSupport::Concern
 
-    def with_wrapper_benchmark(&block)
-      @benchmark = Benchmark.measure(&block)
-  
-      model.duration = @benchmark.real.round if model.responds_to?(:duration=)
+    included do
+      attr_accessor :benchmark
+
+      def with_wrapper_benchmark(&block)
+        @benchmark = Benchmark.measure(&block)
+
+        model.meta['duration'] = @benchmark.real.round if model.respond_to?(:meta)
+      end
     end
   end
 end
