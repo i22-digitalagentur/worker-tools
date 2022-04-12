@@ -285,7 +285,7 @@ The gem is available as open source under the terms of the [MIT License](http://
 [build-badge]: https://travis-ci.org/i22-digitalagentur/worker-tools.svg?branch=master
 [build-url]: https://travis-ci.org/i22-digitalagentur/worker-tools
 [maintained-shield]: https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=flat
-[release-shield]: https://img.shields.io/github/release/H3nSte1n/coverage-badge-creator.svg?style=flat
+[release-shield]: https://img.shields.io/github/release/i22-digitalagentur/coverage-badge-creator.svg?style=flat
 [release-url]: https://GitHub.com/i22-digitalagentur/worker-tools/releases/
 [license-shield]: https://img.shields.io/badge/License-MIT-yellow.svg?style=flat
 [license-url]: https://github.com/i22-digitalagentur/worker-tools/blob/master/LICENSE
