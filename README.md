@@ -272,7 +272,7 @@ Contributions are what make the open source community such an amazing place to b
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+The gem is available under the MIT License. See `LICENSE` for more information.
 
 ## Acknowledgement
 
