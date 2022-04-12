@@ -5,7 +5,7 @@
 [![Release][release-shield]][release-url]
 ![Maintenance][maintained-shield]
 
-<br><br>
+<br>
 
 <details open="open">
   <summary>Table of Contents</summary>
@@ -17,15 +17,15 @@
       <a href="#installation">Installation</a>
     </li>
     <li><a href="#conventions">Conventions</a></li>
-    <li><a href="#basics">Basics</a></li>
-    <li><a href="#recorder">Recorder</a></li>
-    <li><a href="#slackerrornotifier">SlackErrorNotifier</a></li>
+    <li><a href="#module-basics">Module 'Basics'</a></li>
+    <li><a href="#module-recorder">Module 'Recorder'</a></li>
+    <li><a href="#module-slackerrornotifier">Module 'SlackErrorNotifier'</a></li>
     <li><a href="#wrappers">Wrappers</a></li>
-    <li><a href="#benchmark">Benchmark</a></li>
-    <li><a href="#notes">Notes</a></li>
+    <li><a href="#module-notes">Module 'Notes'</a></li>
     <li><a href="#requirements">Requirements</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
+    <li><a href="#acknowledgement">Acknowledgement</a></li>
   </ol>
 </details>
 
@@ -244,7 +244,7 @@ def perform(model_id)
 end
 ```
 
-## Module Notes
+## Module 'Notes'
 
 If you use ActiveRecord you may need to modify the serielizer as well as decerielizer from the note attribute. After that you can easily serielize hashes and array of hashes with indifferent access. Therefore the gem provides two utility methods. (HashWithIndifferentAccessType, SerializedArrayType). There is an example of how you can use it.
 
@@ -274,12 +274,18 @@ Contributions are what make the open source community such an amazing place to b
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
 
+## Acknowledgement
+
+* [Img Shields](https://shields.io)
+
+
+
 
 <!--shield-styles-->
 [build-badge]: https://travis-ci.org/i22-digitalagentur/worker-tools.svg?branch=master
 [build-url]: https://travis-ci.org/i22-digitalagentur/worker-tools
 [maintained-shield]: https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=flat
 [release-shield]: https://img.shields.io/github/release/H3nSte1n/coverage-badge-creator.svg?style=flat
-[release-url]: https://GitHub.com/H3nSte1n/coverage-badge-creator/releases/
+[release-url]: https://GitHub.com/i22-digitalagentur/worker-tools/releases/
 [license-shield]: https://img.shields.io/badge/License-MIT-yellow.svg?style=flat
-[license-url]: https://github.com/H3nSte1n/coverage-badge-creator/blob/master/LICENSE
+[license-url]: https://github.com/i22-digitalagentur/worker-tools/blob/master/LICENSE
