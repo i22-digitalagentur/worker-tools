@@ -3,10 +3,9 @@ require 'active_support/concern'
 module WorkerTools
   module Basics
     extend ActiveSupport::Concern
-
+    
     included do
       attr_writer :model
-      attr_accessor :information
 
       def self.wrappers(*args)
         @wrappers ||= args.flatten
@@ -62,8 +61,7 @@ module WorkerTools
 
     def finalize
       model.update!(
-        state: 'complete',
-        information: information
+        state: 'complete'
       )
     end
 

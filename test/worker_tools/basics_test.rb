@@ -130,15 +130,15 @@ describe WorkerTools::Basics do
   end
 
   describe '#finalize' do
-    it 'saves information into the model and sets the state to complete' do
+    it 'saves note into the model and sets the state to complete' do
       import = create_import
       importer = Importer.new
       importer.model = import
-      importer.information = 'details'
+      importer.model.notes << 'details'
 
       importer.send(:finalize)
       assert import.complete?
-      assert_equal 'details', import.information
+      assert_equal ['details'], import.notes
     end
   end
 end

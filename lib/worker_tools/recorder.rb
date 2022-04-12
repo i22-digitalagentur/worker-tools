@@ -23,19 +23,22 @@ module WorkerTools
     end
 
     def record_fail(error)
-      record "ID #{model.id} - Error"
+      # record "ID #{model.id} - Error"
       record(error, :error)
-      model.information = information
       model.save!(validate: false)
     end
 
     def add_log(message, level = :info)
-      logger.public_send(level, format_log_message(message))
+      logger.public_send(level, format_message(message))
     end
 
     def add_info(message)
-      @information ||= ''
-      information << "#{format_info_message(message)}\n"
+      args = info_message_obj(message)
+      add_note(args[:message], level: args[:level])
+    end
+
+    def add_note(message, level: :info)
+      model.notes.push(level: level, message: message)
     end
 
     def record(message, level = :info)
@@ -43,16 +46,23 @@ module WorkerTools
       add_info(message)
     end
 
-    def format_log_message(message)
+    def info_message_type(message)
+      return :error if message.is_a?(Exception)
+
+      :info
+    end
+
+    def format_message(message)
       return error_to_text(message, log_error_trace_lines) if message.is_a?(Exception)
 
       message
     end
 
-    def format_info_message(message)
-      return error_to_text(message, info_error_trace_lines) if message.is_a?(Exception)
-
-      message
+    def info_message_obj(message)
+      {
+        message: "#{format_message(message)}\n",
+        level: info_message_type(message)
+      }
     end
 
     def logger
