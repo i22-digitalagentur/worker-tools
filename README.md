@@ -225,6 +225,23 @@ class MyImporter
 
     puts foo # foo == 10
   end
+  
+  # ..
+end
+```
+
+## Benchmark
+
+There is a benchmark wrapper that you can use to record the benchmark. The only thing you need to do is to include the benchmark module and append the name to the wrapper array. Below you can see an example of the integration.
+
+```ruby
+class MyImporter
+  include WorkerTools::CustomBenchmark
+  wrappers :benchmark
+
+  def run
+    # do stuff
+  end
 
   # ..
 end
