@@ -44,7 +44,40 @@ describe WorkerTools::Counters do
 
     it 'creates for each counter an incrementer method' do
       @importer.class.read_counters.each do |counter|
-        expect(@importer.respond_to?("increment_#{counter}=")).must_equal true
+        expect(@importer.respond_to?("increment_#{counter}")).must_equal true
+      end
+    end
+
+    describe '#counters_increment' do
+      it 'increments the counter by 1' do
+        @importer.class.read_counters.each do |counter|
+          @importer.send("#{counter}=", 0)
+          @importer.send("increment_#{counter}")
+          expect(@importer.send(counter)).must_equal 1
+        end
+      end
+    end
+
+    describe '#counter=' do
+      it 'overwrites the current counter value' do
+        @importer.class.read_counters.each do |counter|
+          @importer.send("#{counter}=", 5)
+          expect(@importer.send(counter)).must_equal 5
+        end
+
+        @importer.class.read_counters.each do |counter|
+          @importer.send("#{counter}=", 2)
+          expect(@importer.send(counter)).must_equal 2
+        end
+      end
+    end
+
+    describe '#counter' do
+      it 'returns value of counter' do
+        @importer.class.read_counters.each do |counter|
+          @importer.send("#{counter}=", 2)
+          expect(@importer.send(counter)).must_equal 2
+        end
       end
     end
   end

@@ -215,7 +215,15 @@ class MyImporter
   counters :foo, :bar
 
   def run
-    # do stuff
+    example_foo_counter_methods
+  end
+
+  def example_foo_counter_methods
+    self.foo = 0
+
+    10.times { increment_foo }
+
+    puts foo # foo == 10
   end
 
   # ..

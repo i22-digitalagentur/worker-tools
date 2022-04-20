@@ -5,14 +5,14 @@ module WorkerTools
     included do
       def self.counters(*args)
         @counters ||= args.flatten
-        init
+        add_counter_methods
       end
 
       def self.read_counters
         @counters || []
       end
 
-      def self.init
+      def self.add_counter_methods
         @counters.each do |name|
           define_method name do
             model.meta[name]
@@ -20,7 +20,7 @@ module WorkerTools
           define_method "#{name}=" do |value|
             model.meta[name] = value
           end
-          define_method "increment_#{name}=" do
+          define_method "increment_#{name}" do
             model.meta[name] += 1
           end
         end
