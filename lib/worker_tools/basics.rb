@@ -33,6 +33,7 @@ module WorkerTools
 
     def perform(model_id = nil)
       @model_id = model_id
+
       with_wrappers(wrapper_methods) do
         run
       end

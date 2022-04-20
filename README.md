@@ -200,6 +200,36 @@ def perform(model_id)
 end
 ```
 
+## Counters
+
+There is a counter wrapper that you can use to add custom counters to the meta attribute. To do this, you need to complete the following tasks:
+- include WorkerTools::Counters to your class
+- add :counters to the wrappers method props
+- call counters method with your custom counters
+You can see an example below. After that, you can access your custom counters via the meta attribute.
+
+```ruby
+class MyImporter
+  include WorkerTools::Counters
+  wrappers :counters
+  counters :foo, :bar
+
+  def run
+    example_foo_counter_methods
+  end
+
+  def example_foo_counter_methods
+    self.foo = 0
+
+    10.times { increment_foo }
+
+    puts foo # foo == 10
+  end
+  
+  # ..
+end
+```
+
 ## Benchmark
 
 There is a benchmark wrapper that you can use to record the benchmark. The only thing you need to do is to include the benchmark module and append the name to the wrapper array. Below you can see an example of the integration.
@@ -216,7 +246,6 @@ class MyImporter
   # ..
 end
 ```
-
 
 ## Contributing
 
