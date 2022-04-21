@@ -5,6 +5,7 @@ ActiveRecord::Schema.define do
     t.integer 'kind', null: false
     t.integer 'state', default: 0, null: false
     t.json 'notes', default: []
+    t.json 'meta', default: {}
     t.timestamps
   end
 end
