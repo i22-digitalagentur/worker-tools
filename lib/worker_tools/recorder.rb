@@ -23,30 +23,26 @@ module WorkerTools
     end
 
     def record_fail(error)
-      # record "ID #{model.id} - Error"
       record(error, :error)
       model.save!(validate: false)
     end
 
-    def add_log(message, level = :info)
-      logger.public_send(level, format_message(message))
+    def add_log(message, level = nil)
+      attrs = default_message_attrs(message, level)
+      logger.public_send(attrs[:level], format_message(attrs[:message]))
     end
 
-    def add_info(message)
-      args = info_message_obj(message)
-      add_note(args[:message], level: args[:level])
-    end
-
-    def add_note(message, level: :info)
-      model.notes.push(level: level, message: message)
+    def add_note(message, level = nil)
+      attrs = default_message_attrs(message, level)
+      model.notes.push(level: attrs[:level], message: attrs[:message])
     end
 
     def record(message, level = :info)
       add_log(message, level)
-      add_info(message)
+      add_note(message, level)
     end
 
-    def info_message_type(message)
+    def level_from_message_type(message)
       return :error if message.is_a?(Exception)
 
       :info
@@ -58,10 +54,10 @@ module WorkerTools
       message
     end
 
-    def info_message_obj(message)
+    def default_message_attrs(message, level)
       {
-        message: "#{format_message(message)}\n",
-        level: info_message_type(message)
+        message: format_message(message),
+        level: level || level_from_message_type(message)
       }
     end
 
