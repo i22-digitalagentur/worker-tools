@@ -22,7 +22,7 @@ describe WorkerTools::CustomBenchmark do
     before :each do
       @import = create_import
       @importer = CustomBenchmark.new
-      Benchmark.expects(:measure).returns(stub(:real => 2))
+      Benchmark.expects(:measure).returns(stub(real: 2))
     end
 
     it 'should call benchmark.measure function' do

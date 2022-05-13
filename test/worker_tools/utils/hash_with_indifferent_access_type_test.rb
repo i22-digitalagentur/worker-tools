@@ -9,7 +9,7 @@ describe WorkerTools::Utils::HashWithIndifferentAccessType do
     end
 
     it 'deserializes a hash with a key as symbol type' do
-      assert_equal({ 'foo' => 'bar' }, type.deserialize({foo: "bar"}))
+      assert_equal({ 'foo' => 'bar' }, type.deserialize(foo: 'bar'))
     end
   end
 end

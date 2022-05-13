@@ -33,7 +33,7 @@ describe WorkerTools::Recorder do
       @recorder = ImporterWithRecorder.new
       @exception = Exception.new('hello world')
     end
-    
+
     describe 'with an Exception' do
       it 'invoke error_to_text method' do
         @recorder.expects(:error_to_text).returns('foo')
@@ -76,7 +76,7 @@ describe WorkerTools::Recorder do
   describe '#default_message_attrs' do
     it 'returns an object with :message and :level' do
       recorder = ImporterWithRecorder.new
-      expect(recorder.default_message_attrs('foo', :info)).must_equal({:message=>"foo", :level=>:info})
+      expect(recorder.default_message_attrs('foo', :info)).must_equal(message: 'foo', level: :info)
     end
   end
 
@@ -103,7 +103,7 @@ describe WorkerTools::Recorder do
     importer.perform(import)
 
     importer.record_fail(exception)
-    assert_includes import.notes, {"level"=>"error", "message"=>"Error: hello world (Exception)Backtrace:\nfoo\n\thoo"}
+    assert_includes import.notes, 'level' => 'error', 'message' => "Error: hello world (Exception)Backtrace:\nfoo\n\thoo"
 
     log_content = File.open(File.join(log_path, filename)).read
     assert_includes log_content, 'hello world'

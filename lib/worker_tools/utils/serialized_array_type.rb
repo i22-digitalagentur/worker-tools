@@ -10,7 +10,7 @@ module WorkerTools
       end
 
       def serialize(value)
-        raise 'not an array' unless Array === value
+        raise 'not an array' unless value.is_a?(Array)
 
         super value
       end

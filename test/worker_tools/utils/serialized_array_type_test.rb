@@ -9,13 +9,13 @@ describe WorkerTools::Utils::SerializedArrayType do
     end
 
     it 'a hash obj array with an key as symbol type' do
-      assert_equal([{ 'foo' => 'bar' }], type.deserialize([{foo: "bar"}]))
+      assert_equal([{ 'foo' => 'bar' }], type.deserialize([{ foo: 'bar' }]))
     end
   end
 
   describe 'serializes' do
     it 'an array of hashes with indifferent access' do
-      assert_equal("[{\"foo\":\"bar\",\"bar\":\"foo\"}]", type.serialize([{ 'foo' => 'bar', bar: 'foo' }]))
+      assert_equal('[{"foo":"bar","bar":"foo"}]', type.serialize([{ 'foo' => 'bar', bar: 'foo' }]))
     end
 
     it 'raises an error if the value is not an array' do

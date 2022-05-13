@@ -14,15 +14,14 @@ module WorkerTools
 
       def self.add_counter_methods
         @counters.each do |name|
-          define_method name do
-            model.meta[name]
-          end
-          define_method "#{name}=" do |value|
-            model.meta[name] = value
-          end
-          define_method "increment_#{name}" do
-            model.meta[name] += 1
-          end
+          # ex `inserts`
+          define_method(name) { model.meta[name] }
+
+          # ex `inserts=`
+          define_method("#{name}=") { |value| model.meta[name] = value }
+
+          # ex `increment_inserts`
+          define_method("increment_#{name}") { model.meta[name] += 1 }
         end
       end
 

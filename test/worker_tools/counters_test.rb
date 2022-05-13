@@ -27,7 +27,7 @@ describe WorkerTools::Counters do
     end
 
     it 'returns an array of counters' do
-      expect(@importer.class.read_counters).must_equal [:foo, :bar]
+      expect(@importer.class.read_counters).must_equal %i[foo bar]
     end
 
     it 'creates for each counter a getter method' do

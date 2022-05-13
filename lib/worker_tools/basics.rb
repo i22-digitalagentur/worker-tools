@@ -3,7 +3,7 @@ require 'active_support/concern'
 module WorkerTools
   module Basics
     extend ActiveSupport::Concern
-    
+
     included do
       attr_writer :model
 
