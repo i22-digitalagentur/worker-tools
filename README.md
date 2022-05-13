@@ -294,7 +294,7 @@ end
 
 ## Module 'Notes'
 
-If you use ActiveRecord you may need to modify the serielizer as well as decerielizer from the note attribute. After that you can easily serielize hashes and array of hashes with indifferent access. Therefore the gem provides two utility methods. (HashWithIndifferentAccessType, SerializedArrayType). There is an example of how you can use it.
+If you use ActiveRecord you may need to modify the serializer as well as deserializer from the note attribute. After that you can easily serialize hashes and array of hashes with indifferent access. For that purpose the gem provides two utility methods. (HashWithIndifferentAccessType, SerializedArrayType). There is an example of how you can use it.
 
 ```ruby
   class ServiceTask < ApplicationRecord
