@@ -11,10 +11,10 @@ describe WorkerTools::XlsxOutput do
     assert_includes err.message, 'xlsx_output_target has to be defined in'
   end
 
-  it 'needs xlsx_output_values to be defined' do
+  it 'needs xlsx_output_row_values to be defined' do
     klass = Foo.new
-    err = assert_raises(RuntimeError) { klass.xlsx_output_values }
-    assert_includes err.message, 'xlsx_output_values has to be defined in'
+    err = assert_raises(RuntimeError) { klass.xlsx_output_row_values }
+    assert_includes err.message, 'xlsx_output_row_values has to be defined in'
   end
 
   it 'needs xlsx_output_column_headers to be defined' do
@@ -31,7 +31,7 @@ describe WorkerTools::XlsxOutput do
         %w[foo1 goo2]
       end
 
-      def xlsx_output_values
+      def xlsx_output_row_values
         [
           %w[test1 testA],
           %w[test2 testB]
@@ -56,7 +56,7 @@ describe WorkerTools::XlsxOutput do
 
     it 'no method definition raises and methods are well defined' do
       assert @klass.xlsx_output_target
-      assert @klass.xlsx_output_values
+      assert @klass.xlsx_output_row_values
       assert @klass.xlsx_output_column_headers
     end
 
@@ -85,7 +85,7 @@ describe WorkerTools::XlsxOutput do
         { a: 'foo1', b: 'goo2' }
       end
 
-      def xlsx_output_values
+      def xlsx_output_row_values
         [
           { a: 'test1', b: 'testA' },
           { b: 'testB', a: 'test2' }
@@ -110,7 +110,7 @@ describe WorkerTools::XlsxOutput do
 
     it 'no method definition raises and methods are well defined' do
       assert @klass.xlsx_output_target
-      assert @klass.xlsx_output_values
+      assert @klass.xlsx_output_row_values
       assert @klass.xlsx_output_column_headers
     end
 
@@ -143,13 +143,13 @@ describe WorkerTools::XlsxOutput do
           sheet_1: {
             label: 'Test 1',
             headers: xlsx_output_column_headers,
-            rows: xlsx_output_values,
+            rows: xlsx_output_row_values,
             column_style: xlsx_output_column_format
           },
           sheet_2: {
             label: 'Test 2',
             headers: xlsx_output_column_headers,
-            rows: xlsx_output_values,
+            rows: xlsx_output_row_values,
             column_style: xlsx_output_column_format
           }
         }
@@ -159,7 +159,7 @@ describe WorkerTools::XlsxOutput do
         %w[foo1 goo2]
       end
 
-      def xlsx_output_values
+      def xlsx_output_row_values
         [
           %w[test1 testA],
           %w[test2 testB]
@@ -206,7 +206,7 @@ describe WorkerTools::XlsxOutput do
         { a: 'foo1', b: 'goo2' }
       end
 
-      def xlsx_output_values
+      def xlsx_output_row_values
         [
           { a: 'test1', b: 'testA' },
           { b: 'testB', a: 'test2' }
@@ -229,13 +229,13 @@ describe WorkerTools::XlsxOutput do
           sheet_1: {
             label: 'Test 1',
             headers: xlsx_output_column_headers,
-            rows: xlsx_output_values,
+            rows: xlsx_output_row_values,
             column_style: xlsx_output_column_format
           },
           sheet_2: {
             label: 'Test 2',
             headers: xlsx_output_column_headers,
-            rows: xlsx_output_values,
+            rows: xlsx_output_row_values,
             column_style: xlsx_output_column_format
           }
         }

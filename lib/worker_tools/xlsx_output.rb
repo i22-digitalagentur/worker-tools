@@ -13,14 +13,14 @@ module WorkerTools
         sheet1: {
           label: 'Sheet 1',
           headers: xlsx_output_column_headers,
-          rows: xlsx_output_values,
+          rows: xlsx_output_row_values,
           column_style: xlsx_output_column_format
         }
       }
     end
 
-    def xlsx_output_values
-      raise "xlsx_output_values has to be defined in #{self}"
+    def xlsx_output_row_values
+      raise "xlsx_output_row_values has to be defined in #{self}"
     end
 
     def xlsx_output_column_headers
