@@ -42,5 +42,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop', '0.71.0'
   spec.add_development_dependency 'simplecov'
   spec.add_development_dependency 'sqlite3'
-  spec.add_development_dependency 'activerecord'
 end
