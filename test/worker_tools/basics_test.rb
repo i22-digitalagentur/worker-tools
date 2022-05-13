@@ -134,11 +134,27 @@ describe WorkerTools::Basics do
       import = create_import
       importer = Importer.new
       importer.model = import
-      importer.model.notes << 'details'
+      note = { level: 'info', message: 'some message' }.with_indifferent_access
+      importer.model.notes.push(note)
 
       importer.send(:finalize)
       assert import.complete?
-      assert_equal ['details'], import.notes
+      assert_equal [note], import.notes
+    end
+
+    it 'sets the state to complete_with_warnings if the notes contain errors or warnings' do
+      import = create_import
+      importer = Importer.new
+      importer.model = import
+
+      importer.model.notes = [{ level: :warning, message: 'pay attention to this' }]
+      importer.send(:finalize)
+      assert import.complete_with_warnings?
+
+      import.state = :complete
+      importer.model.notes = [{ level: :error, message: 'pay also attention to this' }]
+      importer.send(:finalize)
+      assert import.complete_with_warnings?
     end
   end
 end
