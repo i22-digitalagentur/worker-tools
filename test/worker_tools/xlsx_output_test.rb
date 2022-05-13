@@ -62,9 +62,9 @@ describe WorkerTools::XlsxOutput do
 
     it 'successful writing of xlsx file' do
       assert @klass.xlsx_output_column_format
-      @klass.expects(:xlsx_style_columns).returns(true)
+      @klass.expects(:xlsx_output_style_columns).returns(true)
 
-      @klass.xlsx_write_output_target
+      @klass.xlsx_output_write_output_target
       assert File.exist?(@klass.xlsx_output_target)
       xlsx = Roo::Excelx.new('./tmp/foo_correct.xlsx')
 
@@ -116,9 +116,9 @@ describe WorkerTools::XlsxOutput do
 
     it 'successful writing of xlsx file' do
       assert @klass.xlsx_output_column_format
-      @klass.expects(:xlsx_style_columns).returns(true)
+      @klass.expects(:xlsx_output_style_columns).returns(true)
 
-      @klass.xlsx_write_output_target
+      @klass.xlsx_output_write_output_target
       assert File.exist?(@klass.xlsx_output_target)
       xlsx = Roo::Excelx.new('./tmp/foo_correct.xlsx')
 
@@ -180,9 +180,9 @@ describe WorkerTools::XlsxOutput do
 
     it 'successful writing of xlsx file' do
       assert @klass.xlsx_output_column_format
-      @klass.expects(:xlsx_style_columns).at_least_once
+      @klass.expects(:xlsx_output_style_columns).at_least_once
 
-      @klass.xlsx_write_output_target
+      @klass.xlsx_output_write_output_target
       assert File.exist?(@klass.xlsx_output_target)
       xlsx = Roo::Excelx.new('./tmp/foo_correct.xlsx')
 
@@ -248,9 +248,9 @@ describe WorkerTools::XlsxOutput do
 
     it 'successful writing of xlsx file' do
       assert @klass.xlsx_output_column_format
-      @klass.expects(:xlsx_style_columns).at_least_once
+      @klass.expects(:xlsx_output_style_columns).at_least_once
 
-      @klass.xlsx_write_output_target
+      @klass.xlsx_output_write_output_target
       assert File.exist?(@klass.xlsx_output_target)
       xlsx = Roo::Excelx.new('./tmp/foo_correct.xlsx')
 

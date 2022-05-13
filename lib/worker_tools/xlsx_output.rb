@@ -59,7 +59,7 @@ module WorkerTools
       FileUtils.mkdir_p(xlsx_output_target_folder) unless File.directory?(xlsx_output_target_folder)
     end
 
-    def xlsx_insert_headers(spreadsheet, headers)
+    def xlsx_output_insert_headers(spreadsheet, headers)
       return unless headers
 
       iterator =
@@ -73,15 +73,15 @@ module WorkerTools
       end
     end
 
-    def xlsx_insert_rows(spreadsheet, rows, headers)
+    def xlsx_output_insert_rows(spreadsheet, rows, headers)
       rows.each_with_index do |row, row_index|
-        xlsx_iterators(row, headers).each_with_index do |value, col_index|
+        xlsx_output_iterators(row, headers).each_with_index do |value, col_index|
           spreadsheet.add_cell(row_index + 1, col_index, value.to_s)
         end
       end
     end
 
-    def xlsx_iterators(iterable, compare_hash = nil)
+    def xlsx_output_iterators(iterable, compare_hash = nil)
       if iterable.is_a? Hash
         raise 'parameter compare_hash should be a hash, too.' if compare_hash.nil? || !compare_hash.is_a?(Hash)
 
@@ -91,10 +91,10 @@ module WorkerTools
       end
     end
 
-    def xlsx_style_columns(spreadsheet, styles, headers)
+    def xlsx_output_style_columns(spreadsheet, styles, headers)
       return false unless headers
 
-      xlsx_iterators(styles, headers).each_with_index do |format, index|
+      xlsx_output_iterators(styles, headers).each_with_index do |format, index|
         next unless format
 
         spreadsheet.change_column_width(index, format[:width])
@@ -103,22 +103,22 @@ module WorkerTools
       true
     end
 
-    def xlsx_write_sheet(workbook, sheet_content, index)
+    def xlsx_output_write_sheet(workbook, sheet_content, index)
       sheet = workbook.worksheets[index]
       sheet = workbook.add_worksheet(sheet_content[:label]) if sheet.nil?
 
       sheet.sheet_name = sheet_content[:label]
-      xlsx_style_columns(sheet, sheet_content[:column_style], sheet_content[:headers])
-      xlsx_insert_headers(sheet, sheet_content[:headers])
-      xlsx_insert_rows(sheet, sheet_content[:rows], sheet_content[:headers])
+      xlsx_output_style_columns(sheet, sheet_content[:column_style], sheet_content[:headers])
+      xlsx_output_insert_headers(sheet, sheet_content[:headers])
+      xlsx_output_insert_rows(sheet, sheet_content[:rows], sheet_content[:headers])
     end
 
-    def xlsx_write_output_target
+    def xlsx_output_write_output_target
       xlsx_ensure_output_target_folder
 
       book = RubyXL::Workbook.new
       xlsx_output_content.each_with_index do |(_, object), index|
-        xlsx_write_sheet(book, object, index)
+        xlsx_output_write_sheet(book, object, index)
       end
 
       book.write xlsx_output_target
