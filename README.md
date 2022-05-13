@@ -1,13 +1,42 @@
 # WorkerTools
 
-[![Build Status](https://travis-ci.org/i22-digitalagentur/worker-tools.svg?branch=master)](https://travis-ci.org/i22-digitalagentur/worker-tools)
+[![Build Status][build-badge]][build-url]
+[![MIT License][license-shield]][license-url]
+[![Release][release-shield]][release-url]
+![Maintenance][maintained-shield]
+
+<br>
+
+<details open="open">
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+    </li>
+    <li>
+      <a href="#installation">Installation</a>
+    </li>
+    <li><a href="#conventions">Conventions</a></li>
+    <li><a href="#module-basics">Module 'Basics'</a></li>
+    <li><a href="#module-recorder">Module 'Recorder'</a></li>
+    <li><a href="#module-slackerrornotifier">Module 'SlackErrorNotifier'</a></li>
+    <li><a href="#wrappers">Wrappers</a></li>
+    <li><a href="#module-notes">Module 'Notes'</a></li>
+    <li><a href="#requirements">Requirements</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#acknowledgement">Acknowledgement</a></li>
+  </ol>
+</details>
+
+## About The Project
 
 WorkerTools is a collection of modules meant to speed up how we write background tasks following a few basic patterns. The structure of plain independent modules with limited abstraction allows to define and override a few methods according to your needs without requiring a deep investment in the library.
 
 These modules provide some features and conventions to address the following points with little configuration on your part:
 
 - How to save the state the task.
-- How to save information relevant to the admins / customers.
+- How to save notes relevant to the admins / customers.
 - How to log the details
 - How to handle exceptions and send notifications
 - How to process CSV files (as input and output)
@@ -32,7 +61,7 @@ Or install it yourself as:
 
 ## Conventions
 
-Most of the modules require an ActiveRecord model to keep track of the state, information, and files related to the job. The class of this model is typically an Import, Export, Report.. or something more generic like a JobEntry.
+Most of the modules require an ActiveRecord model to keep track of the state, notes, and files related to the job. The class of this model is typically an Import, Export, Report.. or something more generic like a JobEntry.
 
 An example of this model for an Import using Paperclip would be something like this:
 
@@ -57,7 +86,7 @@ In this case the migration would be something like this:
     create_table :imports do |t|
       t.integer :kind, null: false
       t.integer :state, default: 0, null: false
-      t.text :information
+      t.json :notes, default: []
       t.json  :options, default: {}
       t.json :meta, default: {}
 
@@ -99,9 +128,9 @@ The basics module contains a `perform` method, which is the usual entry point fo
 
 ## Module 'Recorder'
 
-Provides some methods to manage a log and the `information` field of the model. The main methods are `add_info`, `add_log`, and `record` (which both logs and appends the message to the information field). See all methods in [recorder](/lib/worker_tools/recorder.rb)
+Provides some methods to manage a log and the `notes` field of the model. The main methods are `add_info`, `add_log`, and `record` (which both logs and appends the message to the notes field). See all methods in [recorder](/lib/worker_tools/recorder.rb)
 
-This module has a _recoder_ wrapper that will register the exception details into the log and information field in case of error:
+This module has a _recoder_ wrapper that will register the exception details into the log and notes field in case of error:
 
 ```ruby
 class MyImporter
@@ -127,19 +156,35 @@ If you only want the logger functions, without worrying about persisting a model
 
 ## Module SlackErrorNotifier
 
-[slack_error_notifier](/lib/worker_tools/slack_error_notifier.rb)
+Provides a Slack error notifier wrapper. To do this, you need to define SLACK_NOTIFIER_WEBHOOK as well as SLACK_NOTIFIER_CHANNEL. Then you need to include the SlackErrorNotifier module in your class and append slack_error_notifier to your wrappers. Below you can see an example. 
+
+```ruby
+  class MyImporter
+    include WorkerTools::SlackErrorNotifier
+
+    wrappers :slack_error_notifier
+
+    def perform
+      with_wrapper_logger do
+        # do stuff
+      end
+    end
+  end
+```
+
+See all methods in [slack_error_notifier](/lib/worker_tools/slack_error_notifier.rb)
 
 ## Module CSV Input
 
-[csv_input](/lib/worker_tools/csv_input.rb)
+See all methods in [csv_input](/lib/worker_tools/csv_input.rb)
 
 ## Module CSV Output
 
-[csv_output](/lib/worker_tools/csv_output.rb)
+See all methods in [csv_output](/lib/worker_tools/csv_output.rb)
 
 ## Module XLSX Input
 
-[xlsx_input](/lib/worker_tools/xlsx_input.rb)
+See all methods in [xlsx_input](/lib/worker_tools/xlsx_input.rb)
 
 
 ## Wrappers
@@ -247,11 +292,48 @@ class MyImporter
 end
 ```
 
+## Module 'Notes'
+
+If you use ActiveRecord you may need to modify the serializer as well as deserializer from the note attribute. After that you can easily serialize hashes and array of hashes with indifferent access. For that purpose the gem provides two utility methods. (HashWithIndifferentAccessType, SerializedArrayType). There is an example of how you can use it.
+
+```ruby
+  class ServiceTask < ApplicationRecord
+
+    attribute :notes, SerializedArrayType.new(type: HashWithIndifferentAccessType.new)
+  end
+```
+
+See all methods in [utils](/lib/worker_tools/utils)
+
+## Requirements
+
+ - ruby > 2.3.1
+
 ## Contributing
+Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/i22-digitalagentur/worker_tools.
-
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/new_feature`)
+3. Commit your Changes (`git commit -m 'feat: Add new feature'`)
+4. Push to the Branch (`git push origin feature/new_feature`)
+5. Open a Pull Request
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+The gem is available under the MIT License. See `LICENSE` for more information.
+
+## Acknowledgement
+
+* [Img Shields](https://shields.io)
+
+
+
+
+<!--shield-styles-->
+[build-badge]: https://travis-ci.org/i22-digitalagentur/worker-tools.svg?branch=master
+[build-url]: https://travis-ci.org/i22-digitalagentur/worker-tools
+[maintained-shield]: https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=flat
+[release-shield]: https://img.shields.io/github/release/i22-digitalagentur/coverage-badge-creator.svg?style=flat
+[release-url]: https://GitHub.com/i22-digitalagentur/worker-tools/releases/
+[license-shield]: https://img.shields.io/badge/License-MIT-yellow.svg?style=flat
+[license-url]: https://github.com/i22-digitalagentur/worker-tools/blob/master/LICENSE
