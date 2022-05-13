@@ -61,9 +61,15 @@ module WorkerTools
     end
 
     def finalize
-      model.update!(
-        state: 'complete'
-      )
+      mark_with_warnings = model.notes.any? do |note|
+        complete_with_warnings_note_levels.include?(note.with_indifferent_access[:level].to_s)
+      end
+
+      model.update!(state: mark_with_warnings ? :complete_with_warnings : :complete)
+    end
+
+    def complete_with_warnings_note_levels
+      %w[error warning]
     end
 
     def create_model_if_not_available

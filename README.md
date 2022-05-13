@@ -67,7 +67,7 @@ An example of this model for an Import using Paperclip would be something like t
 
 ```ruby
 class Import < ApplicationRecord
-  enum state: { waiting: 0, complete: 1, failed: 2 }
+  enum state: { waiting: 0, complete: 1, failed: 2, complete_with_warnings: 3 }
   enum kind: { foo: 0, bar: 1 }
 
   has_attached_file :attachment
@@ -77,7 +77,9 @@ class Import < ApplicationRecord
   end
 ```
 
-The state `complete` and `failed` are used by the modules. Both `state` and `kind` could be an enum or just a string field.  Whether you have one, none or many attachments, and which library you use to handle it's up to you.
+The state `complete` and `failed` are used by the modules. Both `state` and `kind` could be an enum or just a string field. Whether you have one, none or many attachments, and which library you use to handle it's up to you.
+
+The state `complete_with_warnings` indicates that the model contains notes that did not lead to a failure but should get some attention. By default those levels are `warning` and `errors` and can be customized.
 
 In this case the migration would be something like this:
 
@@ -96,7 +98,7 @@ In this case the migration would be something like this:
 
       t.timestamps
     end
- ```
+```
 
 ## Module 'Basics'
 
@@ -124,7 +126,6 @@ end
 ```
 
 The basics module contains a `perform` method, which is the usual entry point for ApplicationJob and Sidekiq. It can receive the id of the model, the model instance, or nothing, in which case it will attempt to create this model on its own.
-
 
 ## Module 'Recorder'
 
@@ -156,7 +157,7 @@ If you only want the logger functions, without worrying about persisting a model
 
 ## Module SlackErrorNotifier
 
-Provides a Slack error notifier wrapper. To do this, you need to define SLACK_NOTIFIER_WEBHOOK as well as SLACK_NOTIFIER_CHANNEL. Then you need to include the SlackErrorNotifier module in your class and append slack_error_notifier to your wrappers. Below you can see an example. 
+Provides a Slack error notifier wrapper. To do this, you need to define SLACK_NOTIFIER_WEBHOOK as well as SLACK_NOTIFIER_CHANNEL. Then you need to include the SlackErrorNotifier module in your class and append slack_error_notifier to your wrappers. Below you can see an example.
 
 ```ruby
   class MyImporter
@@ -186,10 +187,9 @@ See all methods in [csv_output](/lib/worker_tools/csv_output.rb)
 
 See all methods in [xlsx_input](/lib/worker_tools/xlsx_input.rb)
 
-
 ## Wrappers
 
-In the [basics module](/lib/worker_tools/basics.rb), `perform` calls your custom method `run` to do the actual work of the task, and wraps it around any methods expecting a block that you might have had defined using `wrappers`.  That gives us a systematic way to add logic depending on the output of `run` and any exceptions that might arise, such as logging the error and context, sending a chat notification, retrying under some circumstances, etc.
+In the [basics module](/lib/worker_tools/basics.rb), `perform` calls your custom method `run` to do the actual work of the task, and wraps it around any methods expecting a block that you might have had defined using `wrappers`. That gives us a systematic way to add logic depending on the output of `run` and any exceptions that might arise, such as logging the error and context, sending a chat notification, retrying under some circumstances, etc.
 
 The following code
 
@@ -248,10 +248,11 @@ end
 ## Counters
 
 There is a counter wrapper that you can use to add custom counters to the meta attribute. To do this, you need to complete the following tasks:
+
 - include WorkerTools::Counters to your class
 - add :counters to the wrappers method props
 - call counters method with your custom counters
-You can see an example below. After that, you can access your custom counters via the meta attribute.
+  You can see an example below. After that, you can access your custom counters via the meta attribute.
 
 ```ruby
 class MyImporter
@@ -270,7 +271,7 @@ class MyImporter
 
     puts foo # foo == 10
   end
-  
+
   # ..
 end
 ```
@@ -307,9 +308,10 @@ See all methods in [utils](/lib/worker_tools/utils)
 
 ## Requirements
 
- - ruby > 2.3.1
+- ruby > 2.3.1
 
 ## Contributing
+
 Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
 1. Fork the Project
@@ -324,12 +326,10 @@ The gem is available under the MIT License. See `LICENSE` for more information.
 
 ## Acknowledgement
 
-* [Img Shields](https://shields.io)
-
-
-
+- [Img Shields](https://shields.io)
 
 <!--shield-styles-->
+
 [build-badge]: https://travis-ci.org/i22-digitalagentur/worker-tools.svg?branch=master
 [build-url]: https://travis-ci.org/i22-digitalagentur/worker-tools
 [maintained-shield]: https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=flat
