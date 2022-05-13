@@ -126,4 +126,33 @@ describe WorkerTools::CsvOutput do
       FileUtils.rm_rf('foo') # cleaning path
     end
   end
+
+  describe '#csv_output_write_mode' do
+    it 'sets the csv write mode' do
+      klass = Foo.new
+      klass.expects(:csv_output_write_mode).returns('write mode')
+      CSV.expects(:open).with(anything, 'write mode', anything)
+
+      klass.csv_output_write_file
+    end
+  end
+
+  describe '#csv_output_csv_options' do
+    it 'sets col_sep and encoding' do
+      klass = Foo.new
+      klass.expects(:csv_output_col_sep).returns('col sep')
+      klass.expects(:csv_output_encoding).returns('encoding')
+      CSV.expects(:open).with(anything, anything, col_sep: 'col sep', encoding: 'encoding')
+
+      klass.csv_output_write_file
+    end
+
+    it 'sets the csv open options' do
+      klass = Foo.new
+      klass.expects(:csv_output_csv_options).returns(some: :options)
+      CSV.expects(:open).with(anything, anything, some: :options)
+
+      klass.csv_output_write_file
+    end
+  end
 end
