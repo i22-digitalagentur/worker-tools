@@ -62,12 +62,20 @@ module WorkerTools
       Encoding::UTF_8
     end
 
+    def csv_output_write_mode
+      'wb'
+    end
+
+    def csv_output_csv_options
+      { col_sep: csv_output_col_sep, encoding: csv_output_encoding }
+    end
+
     def csv_output_insert_headers(csv)
       csv << csv_output_column_headers.values if csv_output_column_headers
     end
 
     def csv_output_write_file
-      CSV.open(csv_output_tmp_file, 'wb', col_sep: csv_output_col_sep, encoding: csv_output_encoding) do |csv|
+      CSV.open(csv_output_tmp_file, csv_output_write_mode, **csv_output_csv_options) do |csv|
         csv_output_insert_headers(csv)
         csv_output_entries.each { |entry| csv << csv_output_row_values(entry) }
       end
