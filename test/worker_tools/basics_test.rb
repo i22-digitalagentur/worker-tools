@@ -78,13 +78,8 @@ describe WorkerTools::Basics do
       assert_equal import, importer.model
     end
 
-    it 'creates the model if create_model_if_not_available is set' do
+    it 'creates the model if not present' do
       importer = Importer.new
-      err = assert_raises(StandardError) { importer.model }
-      assert_includes err.message, 'Model not available'
-
-      importer = Importer.new
-      importer.expects(:create_model_if_not_available).returns(true)
       import = importer.model
       assert_instance_of Import, import
     end
