@@ -1,7 +1,7 @@
 require 'test_helper'
 
 describe WorkerTools::XlsxOutput do
-  class Foo
+  class FooXlsxOutput
     include WorkerTools::Basics
     include WorkerTools::XlsxOutput
 
@@ -21,19 +21,19 @@ describe WorkerTools::XlsxOutput do
   end
 
   it 'needs xlsx_output_row_values to be defined' do
-    klass = Foo.new
+    klass = FooXlsxOutput.new
     err = assert_raises(RuntimeError) { klass.xlsx_output_row_values }
     assert_includes err.message, 'xlsx_output_row_values has to be defined in'
   end
 
   it 'needs xlsx_output_column_headers to be defined' do
-    klass = Foo.new
+    klass = FooXlsxOutput.new
     err = assert_raises(RuntimeError) { klass.xlsx_output_column_headers }
     assert_includes err.message, 'xlsx_output_column_headers has to be defined in'
   end
 
   describe 'xlsx file output with array' do
-    class FooCorrectArray < Foo
+    class FooCorrectArray < FooXlsxOutput
       def xlsx_output_column_headers
         %w[foo1 goo2]
       end
@@ -81,8 +81,7 @@ describe WorkerTools::XlsxOutput do
   end
 
   describe 'xlsx file output with hash' do
-    class FooCorrectHash < Foo
-
+    class FooCorrectHash < FooXlsxOutput
       def xlsx_output_column_headers
         { a: 'foo1', b: 'goo2' }
       end
@@ -129,7 +128,7 @@ describe WorkerTools::XlsxOutput do
   end
 
   describe 'xlsx file output with array - multi sheet' do
-    class FooCorrectArrayMultiSheet < Foo
+    class FooCorrectArrayMultiSheet < FooXlsxOutput
       def xlsx_output_content
         {
           sheet_1: {
@@ -195,7 +194,7 @@ describe WorkerTools::XlsxOutput do
   end
 
   describe 'xlsx file output with hash - multi sheet' do
-    class FooCorrectHashMultiSheet < Foo
+    class FooCorrectHashMultiSheet < FooXlsxOutput
       def xlsx_output_column_headers
         { a: 'foo1', b: 'goo2' }
       end

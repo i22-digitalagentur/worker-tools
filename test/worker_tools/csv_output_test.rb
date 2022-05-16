@@ -1,7 +1,7 @@
 require 'test_helper'
 
 describe WorkerTools::CsvOutput do
-  class Foo
+  class FooCsvOutput
     include WorkerTools::Basics
     include WorkerTools::CsvOutput
 
@@ -21,25 +21,25 @@ describe WorkerTools::CsvOutput do
   end
 
   it 'needs csv_output_column_headers to be defined' do
-    klass = Foo.new
+    klass = FooCsvOutput.new
     err = assert_raises(RuntimeError) { klass.csv_output_column_headers }
     assert_includes err.message, 'csv_output_column_headers has to be defined in'
   end
 
   it 'needs csv_output_entries to be defined' do
-    klass = Foo.new
+    klass = FooCsvOutput.new
     err = assert_raises(RuntimeError) { klass.csv_output_entries }
     assert_includes err.message, 'csv_output_entries has to be defined in'
   end
 
   it 'needs csv_output_row_values(arg) to be defined' do
-    klass = Foo.new
+    klass = FooCsvOutput.new
     err = assert_raises(RuntimeError) { klass.csv_output_row_values(1) }
     assert_includes err.message, 'csv_output_row_values has to be defined in'
   end
 
   describe 'csv file output' do
-    class FooCorrect < Foo
+    class FooCorrect < FooCsvOutput
       def csv_output_column_headers
         {
           col_1: 'Col 1',
@@ -122,7 +122,7 @@ describe WorkerTools::CsvOutput do
 
   describe '#csv_output_write_mode' do
     it 'sets the csv write mode' do
-      klass = Foo.new
+      klass = FooCsvOutput.new
       klass.expects(:csv_output_write_mode).returns('write mode')
       CSV.expects(:open).with(anything, 'write mode', anything)
 
@@ -132,7 +132,7 @@ describe WorkerTools::CsvOutput do
 
   describe '#csv_output_csv_options' do
     it 'sets col_sep and encoding' do
-      klass = Foo.new
+      klass = FooCsvOutput.new
       klass.expects(:csv_output_col_sep).returns('col sep')
       klass.expects(:csv_output_encoding).returns('encoding')
       CSV.expects(:open).with(anything, anything, col_sep: 'col sep', encoding: 'encoding')
@@ -141,7 +141,7 @@ describe WorkerTools::CsvOutput do
     end
 
     it 'sets the csv open options' do
-      klass = Foo.new
+      klass = FooCsvOutput.new
       klass.expects(:csv_output_csv_options).returns(some: :options)
       CSV.expects(:open).with(anything, anything, some: :options)
 
