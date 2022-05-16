@@ -2,7 +2,18 @@ require 'test_helper'
 
 describe WorkerTools::XlsxOutput do
   class Foo
+    include WorkerTools::Basics
     include WorkerTools::XlsxOutput
+
+    wrappers :basics
+
+    def model_class
+      Import
+    end
+
+    def model_kind
+      'foo/test'
+    end
   end
 
   it 'needs xlsx_output_target to be defined' do
@@ -24,9 +35,7 @@ describe WorkerTools::XlsxOutput do
   end
 
   describe 'xlsx file output with array' do
-    class FooCorrectArray
-      include WorkerTools::XlsxOutput
-
+    class FooCorrectArray < Foo
       def xlsx_output_column_headers
         %w[foo1 goo2]
       end
@@ -64,7 +73,7 @@ describe WorkerTools::XlsxOutput do
       assert @klass.xlsx_output_column_format
       @klass.expects(:xlsx_output_style_columns).returns(true)
 
-      @klass.xlsx_output_write_output_target
+      @klass.xlsx_output_write_file
       assert File.exist?(@klass.xlsx_output_target)
       xlsx = Roo::Excelx.new('./tmp/foo_correct.xlsx')
 
@@ -78,8 +87,7 @@ describe WorkerTools::XlsxOutput do
   end
 
   describe 'xlsx file output with hash' do
-    class FooCorrectHash
-      include WorkerTools::XlsxOutput
+    class FooCorrectHash < Foo
 
       def xlsx_output_column_headers
         { a: 'foo1', b: 'goo2' }
@@ -118,7 +126,7 @@ describe WorkerTools::XlsxOutput do
       assert @klass.xlsx_output_column_format
       @klass.expects(:xlsx_output_style_columns).returns(true)
 
-      @klass.xlsx_output_write_output_target
+      @klass.xlsx_output_write_file
       assert File.exist?(@klass.xlsx_output_target)
       xlsx = Roo::Excelx.new('./tmp/foo_correct.xlsx')
 
@@ -131,9 +139,7 @@ describe WorkerTools::XlsxOutput do
   end
 
   describe 'xlsx file output with array - multi sheet' do
-    class FooCorrectArrayMultiSheet
-      include WorkerTools::XlsxOutput
-
+    class FooCorrectArrayMultiSheet < Foo
       def xlsx_output_target
         './tmp/foo_correct.xlsx'
       end
@@ -182,7 +188,7 @@ describe WorkerTools::XlsxOutput do
       assert @klass.xlsx_output_column_format
       @klass.expects(:xlsx_output_style_columns).at_least_once
 
-      @klass.xlsx_output_write_output_target
+      @klass.xlsx_output_write_file
       assert File.exist?(@klass.xlsx_output_target)
       xlsx = Roo::Excelx.new('./tmp/foo_correct.xlsx')
 
@@ -199,9 +205,7 @@ describe WorkerTools::XlsxOutput do
   end
 
   describe 'xlsx file output with hash - multi sheet' do
-    class FooCorrectHashMultiSheet
-      include WorkerTools::XlsxOutput
-
+    class FooCorrectHashMultiSheet < Foo
       def xlsx_output_column_headers
         { a: 'foo1', b: 'goo2' }
       end
@@ -250,7 +254,7 @@ describe WorkerTools::XlsxOutput do
       assert @klass.xlsx_output_column_format
       @klass.expects(:xlsx_output_style_columns).at_least_once
 
-      @klass.xlsx_output_write_output_target
+      @klass.xlsx_output_write_file
       assert File.exist?(@klass.xlsx_output_target)
       xlsx = Roo::Excelx.new('./tmp/foo_correct.xlsx')
 

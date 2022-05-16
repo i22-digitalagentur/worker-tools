@@ -51,14 +51,6 @@ module WorkerTools
       {}
     end
 
-    def xlsx_output_target_folder
-      @xlsx_output_target_folder ||= File.dirname(xlsx_output_target)
-    end
-
-    def xlsx_ensure_output_target_folder
-      FileUtils.mkdir_p(xlsx_output_target_folder) unless File.directory?(xlsx_output_target_folder)
-    end
-
     def xlsx_output_insert_headers(spreadsheet, headers)
       return unless headers
 
@@ -103,6 +95,18 @@ module WorkerTools
       true
     end
 
+    def xlsx_output_tmp_file
+      @xlsx_output_tmp_file ||= Tempfile.new(['output', '.xlsx'])
+    end
+
+    def xlsx_output_add_attachment
+      model.add_attachment(
+        xlsx_output_tmp_file,
+        file_name: model_file_name,
+        content_type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      )
+    end
+
     def xlsx_output_write_sheet(workbook, sheet_content, index)
       sheet = workbook.worksheets[index]
       sheet = workbook.add_worksheet(sheet_content[:label]) if sheet.nil?
@@ -113,15 +117,15 @@ module WorkerTools
       xlsx_output_insert_rows(sheet, sheet_content[:rows], sheet_content[:headers])
     end
 
-    def xlsx_output_write_output_target
-      xlsx_ensure_output_target_folder
-
+    def xlsx_output_write_file
       book = RubyXL::Workbook.new
       xlsx_output_content.each_with_index do |(_, object), index|
         xlsx_output_write_sheet(book, object, index)
       end
 
-      book.write xlsx_output_target
+      book.write xlsx_output_tmp_file
+
+      xlsx_output_add_attachment
     end
   end
 end

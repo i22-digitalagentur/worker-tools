@@ -38,18 +38,6 @@ module WorkerTools
     end
     # rubocop:enable Lint/UnusedMethodArgument
 
-    def cvs_output_target_folder
-      File.dirname(csv_output_target)
-    end
-
-    def csv_output_target_file_name
-      File.basename(csv_output_target)
-    end
-
-    def csv_ouput_ensure_target_folder
-      FileUtils.mkdir_p(cvs_output_target_folder) unless File.directory?(cvs_output_target_folder)
-    end
-
     def csv_output_tmp_file
       @csv_output_tmp_file ||= Tempfile.new(['output', '.csv'])
     end
@@ -74,17 +62,17 @@ module WorkerTools
       csv << csv_output_column_headers.values if csv_output_column_headers
     end
 
+    def csv_output_add_attachment
+      model.add_attachment(csv_output_tmp_file, file_name: model_file_name, content_type: 'text/csv')
+    end
+
     def csv_output_write_file
       CSV.open(csv_output_tmp_file, csv_output_write_mode, **csv_output_csv_options) do |csv|
         csv_output_insert_headers(csv)
         csv_output_entries.each { |entry| csv << csv_output_row_values(entry) }
       end
-      csv_output_write_target if csv_output_target
-    end
 
-    def csv_output_write_target
-      csv_ouput_ensure_target_folder
-      FileUtils.cp(csv_output_tmp_file.path, csv_output_target)
+      csv_output_add_attachment
     end
   end
 end
