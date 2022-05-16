@@ -2,7 +2,22 @@ require 'test_helper'
 
 describe WorkerTools::CsvOutput do
   class Foo
+    include WorkerTools::Basics
     include WorkerTools::CsvOutput
+
+    wrappers :basics
+
+    def model_class
+      Import
+    end
+
+    def model_kind
+      'foo_test'
+    end
+
+    def create_model_if_not_available
+      true
+    end
   end
 
   it 'needs csv_output_column_headers to be defined' do
@@ -24,9 +39,7 @@ describe WorkerTools::CsvOutput do
   end
 
   describe 'csv file output' do
-    class FooCorrect
-      include WorkerTools::CsvOutput
-
+    class FooCorrect < Foo
       def csv_output_column_headers
         {
           col_1: 'Col 1',
@@ -76,54 +89,34 @@ describe WorkerTools::CsvOutput do
 
     it 'successful writing of csv file' do
       @klass.csv_output_write_file
-      assert File.exist?(@klass.csv_output_tmp_file.path)
-      file = File.new(@klass.csv_output_tmp_file.path, encoding: Encoding::UTF_8)
-      content = file.read
-      file.close
-
-      assert_equal "Col 1;Col 2\ncell_1.1ä;cell_1.2ü\ncell_2.1;cell_2.2\n", content
+      attachment = @klass.model.attachments.first
+      assert attachment
+      assert_instance_of Tempfile, attachment.file
+      assert_equal 'foo_test.csv', attachment.file_name
+      assert_equal 'text/csv', attachment.content_type
+      assert_equal "Col 1;Col 2\ncell_1.1ä;cell_1.2ü\ncell_2.1;cell_2.2\n", attachment.file.read
     end
 
     it 'successful writing of csv file with encoding ISO_8859_1' do
       @klass.stubs(:csv_output_encoding).returns(Encoding::ISO_8859_1)
-      assert_equal Encoding::ISO_8859_1, @klass.csv_output_encoding
-
       @klass.csv_output_write_file
-      assert File.exist?(@klass.csv_output_tmp_file.path)
-      file = File.new(@klass.csv_output_tmp_file.path)
-      content = file.read
-      file.close
-
-      assert_equal "Col 1;Col 2\ncell_1.1\xE4;cell_1.2\xFC\ncell_2.1;cell_2.2\n", content
+      attachment = @klass.model.attachments.first
+      assert attachment
+      assert_equal "Col 1;Col 2\ncell_1.1\xE4;cell_1.2\xFC\ncell_2.1;cell_2.2\n", attachment.file.read
     end
 
     it 'successful writing of csv file with custom file name' do
-      @klass.stubs(:csv_output_target).returns('test.csv')
-      assert @klass.csv_output_target
-
       @klass.csv_output_write_file
-      assert File.exist?('test.csv')
-      file = File.new(@klass.csv_output_tmp_file.path, encoding: Encoding::UTF_8)
-      content = file.read
-      file.close
-
-      assert_equal "Col 1;Col 2\ncell_1.1ä;cell_1.2ü\ncell_2.1;cell_2.2\n", content
-      FileUtils.rm('test.csv') # cleaning path
+      attachment = @klass.model.attachments.first
+      assert attachment
+      assert_equal "Col 1;Col 2\ncell_1.1ä;cell_1.2ü\ncell_2.1;cell_2.2\n", attachment.file.read
     end
 
     it 'successful writing of csv file with custom file name within given folder' do
-      @klass.stubs(:csv_output_target).returns('foo/test.csv')
-      assert @klass.csv_output_target
-
       @klass.csv_output_write_file
-      assert File.exist?('foo/test.csv')
-      file = File.new(@klass.csv_output_tmp_file.path, encoding: Encoding::UTF_8)
-      content = file.read
-      file.close
-
-      assert_equal "Col 1;Col 2\ncell_1.1ä;cell_1.2ü\ncell_2.1;cell_2.2\n", content
-
-      FileUtils.rm_rf('foo') # cleaning path
+      attachment = @klass.model.attachments.first
+      assert attachment
+      assert_equal "Col 1;Col 2\ncell_1.1ä;cell_1.2ü\ncell_2.1;cell_2.2\n", attachment.file.read
     end
   end
 

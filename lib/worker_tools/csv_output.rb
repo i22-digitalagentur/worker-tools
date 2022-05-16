@@ -2,13 +2,6 @@ require 'csv'
 
 module WorkerTools
   module CsvOutput
-    # if defined, this file will be written to this destination (regardless
-    # of whether the model saves the file as well)
-    def csv_output_target
-      # Ex: Rails.root.join('shared', 'foo', 'bar.csv')
-      false
-    end
-
     def csv_output_entries
       raise "csv_output_entries has to be defined in #{self}"
     end
@@ -42,6 +35,10 @@ module WorkerTools
       @csv_output_tmp_file ||= Tempfile.new(['output', '.csv'])
     end
 
+    def csv_output_file_name
+      "#{model_kind}.csv"
+    end
+
     def csv_output_col_sep
       ';'
     end
@@ -63,7 +60,7 @@ module WorkerTools
     end
 
     def csv_output_add_attachment
-      model.add_attachment(csv_output_tmp_file, file_name: model_file_name, content_type: 'text/csv')
+      model.add_attachment(csv_output_tmp_file, file_name: csv_output_file_name, content_type: 'text/csv')
     end
 
     def csv_output_write_file

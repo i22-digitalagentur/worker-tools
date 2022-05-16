@@ -12,14 +12,12 @@ describe WorkerTools::XlsxOutput do
     end
 
     def model_kind
-      'foo/test'
+      'foo_test'
     end
-  end
 
-  it 'needs xlsx_output_target to be defined' do
-    klass = Foo.new
-    err = assert_raises(RuntimeError) { klass.xlsx_output_target }
-    assert_includes err.message, 'xlsx_output_target has to be defined in'
+    def create_model_if_not_available
+      true
+    end
   end
 
   it 'needs xlsx_output_row_values to be defined' do
@@ -47,10 +45,6 @@ describe WorkerTools::XlsxOutput do
         ]
       end
 
-      def xlsx_output_target
-        './tmp/foo_correct.xlsx'
-      end
-
       def xlsx_output_column_format
         {
           a: { width: 20.0, text_wrap: true },
@@ -64,7 +58,6 @@ describe WorkerTools::XlsxOutput do
     end
 
     it 'no method definition raises and methods are well defined' do
-      assert @klass.xlsx_output_target
       assert @klass.xlsx_output_row_values
       assert @klass.xlsx_output_column_headers
     end
@@ -74,8 +67,9 @@ describe WorkerTools::XlsxOutput do
       @klass.expects(:xlsx_output_style_columns).returns(true)
 
       @klass.xlsx_output_write_file
-      assert File.exist?(@klass.xlsx_output_target)
-      xlsx = Roo::Excelx.new('./tmp/foo_correct.xlsx')
+      attachment = @klass.model.attachments.first
+      assert attachment
+      xlsx = Roo::Excelx.new(attachment.file.path)
 
       sheet = xlsx.sheet(0)
       assert sheet
@@ -106,10 +100,6 @@ describe WorkerTools::XlsxOutput do
           b: { width: 10.0, text_wrap: true }
         }
       end
-
-      def xlsx_output_target
-        './tmp/foo_correct.xlsx'
-      end
     end
 
     def setup
@@ -117,7 +107,6 @@ describe WorkerTools::XlsxOutput do
     end
 
     it 'no method definition raises and methods are well defined' do
-      assert @klass.xlsx_output_target
       assert @klass.xlsx_output_row_values
       assert @klass.xlsx_output_column_headers
     end
@@ -127,8 +116,9 @@ describe WorkerTools::XlsxOutput do
       @klass.expects(:xlsx_output_style_columns).returns(true)
 
       @klass.xlsx_output_write_file
-      assert File.exist?(@klass.xlsx_output_target)
-      xlsx = Roo::Excelx.new('./tmp/foo_correct.xlsx')
+      attachment = @klass.model.attachments.first
+      assert attachment
+      xlsx = Roo::Excelx.new(attachment.file.path)
 
       sheet = xlsx.sheet(0)
       assert sheet
@@ -140,10 +130,6 @@ describe WorkerTools::XlsxOutput do
 
   describe 'xlsx file output with array - multi sheet' do
     class FooCorrectArrayMultiSheet < Foo
-      def xlsx_output_target
-        './tmp/foo_correct.xlsx'
-      end
-
       def xlsx_output_content
         {
           sheet_1: {
@@ -189,8 +175,12 @@ describe WorkerTools::XlsxOutput do
       @klass.expects(:xlsx_output_style_columns).at_least_once
 
       @klass.xlsx_output_write_file
-      assert File.exist?(@klass.xlsx_output_target)
-      xlsx = Roo::Excelx.new('./tmp/foo_correct.xlsx')
+      attachment = @klass.model.attachments.first
+      assert attachment
+      assert_instance_of Tempfile, attachment.file
+      assert_equal 'foo_test.xlsx', attachment.file_name
+      assert_equal 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', attachment.content_type
+      xlsx = Roo::Excelx.new(attachment.file.path)
 
       assert xlsx.sheet(0)
       assert xlsx.sheet(1)
@@ -224,10 +214,6 @@ describe WorkerTools::XlsxOutput do
         }
       end
 
-      def xlsx_output_target
-        './tmp/foo_correct.xlsx'
-      end
-
       def xlsx_output_content
         {
           sheet_1: {
@@ -255,8 +241,9 @@ describe WorkerTools::XlsxOutput do
       @klass.expects(:xlsx_output_style_columns).at_least_once
 
       @klass.xlsx_output_write_file
-      assert File.exist?(@klass.xlsx_output_target)
-      xlsx = Roo::Excelx.new('./tmp/foo_correct.xlsx')
+      attachment = @klass.model.attachments.first
+      assert attachment
+      xlsx = Roo::Excelx.new(attachment.file.path)
 
       assert xlsx.sheet(0)
       assert xlsx.sheet(1)

@@ -1,13 +1,6 @@
 require 'rubyXL'
 module WorkerTools
   module XlsxOutput
-    # if defined, this file will be written to this destination (regardless
-    # of whether the model saves the file as well)
-    def xlsx_output_target
-      # Ex: Rails.root.join('shared', 'foo', 'bar.xlsx')
-      raise "xlsx_output_target has to be defined in #{self}"
-    end
-
     def xlsx_output_content
       {
         sheet1: {
@@ -99,10 +92,14 @@ module WorkerTools
       @xlsx_output_tmp_file ||= Tempfile.new(['output', '.xlsx'])
     end
 
+    def xlsx_output_file_name
+      "#{model_kind}.xlsx"
+    end
+
     def xlsx_output_add_attachment
       model.add_attachment(
         xlsx_output_tmp_file,
-        file_name: model_file_name,
+        file_name: xlsx_output_file_name,
         content_type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       )
     end
