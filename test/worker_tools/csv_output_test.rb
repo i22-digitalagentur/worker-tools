@@ -96,16 +96,11 @@ describe WorkerTools::CsvOutput do
     end
 
     it 'successful writing of csv file with custom file name' do
+      @klass.expects(:csv_output_file_name).returns('custom.csv')
       @klass.csv_output_write_file
       attachment = @klass.model.attachments.first
       assert attachment
-      assert_equal "Col 1;Col 2\ncell_1.1ä;cell_1.2ü\ncell_2.1;cell_2.2\n", attachment.file.read
-    end
-
-    it 'successful writing of csv file with custom file name within given folder' do
-      @klass.csv_output_write_file
-      attachment = @klass.model.attachments.first
-      assert attachment
+      assert_equal(attachment.file_name, 'custom.csv')
       assert_equal "Col 1;Col 2\ncell_1.1ä;cell_1.2ü\ncell_2.1;cell_2.2\n", attachment.file.read
     end
   end
