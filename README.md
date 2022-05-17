@@ -23,7 +23,15 @@
     <li><a href="#wrappers">Wrappers</a></li>
     <li><a href="#module-notes">Module 'Notes'</a></li>
     <li><a href="#attachments">Attachments</a></li>
-    <li><a href="#complete-examples">Complete Examples</a></li>
+    <li>
+      <a href="#complete-examples">Complete Examples</a>
+      <ul>
+        <li><a href="#xlsx-input-example">XLSX Input Example</a></li>
+        <li><a href="#csv-input-example">CSV Input Example</a></li>
+        <li><a href="#csv-output-example">CSV Output Example</a></li>
+        <li><a href="#xlsx-output-example">XLSX Output Example</a></li>
+      </ul>
+    </li>
     <li><a href="#requirements">Requirements</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
