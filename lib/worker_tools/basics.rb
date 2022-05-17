@@ -72,10 +72,6 @@ module WorkerTools
       %w[error warning]
     end
 
-    def create_model_if_not_available
-      false
-    end
-
     def model
       @model ||= find_model
     end
@@ -93,7 +89,6 @@ module WorkerTools
       @model_id ||= nil
       return @model_id if @model_id.is_a?(model_class)
       return model_class.find(@model_id) if @model_id
-      raise 'Model not available' unless create_model_if_not_available
 
       t = model_class.new
       t.kind = model_kind if t.respond_to?(:kind=)

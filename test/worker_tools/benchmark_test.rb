@@ -33,10 +33,5 @@ describe WorkerTools::CustomBenchmark do
       @importer.perform(@import)
       expect(@importer.model.meta['duration']).must_equal 2
     end
-
-    it 'raise error if model.meta not exist' do
-      err = assert_raises(StandardError) { @importer.with_wrapper_benchmark }
-      assert_includes err.message, 'Model not available'
-    end
   end
 end

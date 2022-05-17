@@ -92,11 +92,6 @@ describe WorkerTools::Counters do
       @importer.expects(:reset_counters).returns(true)
       @importer.perform(@import)
     end
-
-    it 'raise error if model.meta not exist' do
-      err = assert_raises(StandardError) { @importer.with_wrapper_counters }
-      assert_includes err.message, 'Model not available'
-    end
   end
 
   describe 'reset_counters' do
