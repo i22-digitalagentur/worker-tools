@@ -331,6 +331,7 @@ end
 ```
 
 ## Complete Examples
+### XLSX Input Example
 
 ```ruby
 # Example with XlsxInput
