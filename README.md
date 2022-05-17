@@ -77,7 +77,14 @@ An example of this model for an Import using Paperclip would be something like t
 
 ```ruby
 class Import < ApplicationRecord
-  enum state: { waiting: 0, complete: 1, failed: 2, complete_with_warnings: 3 }
+  enum state: %w[
+    waiting
+    complete
+    complete_with_warnings
+    failed
+    running
+  ].map { |e| [e, e] }.to_h
+
   enum kind: { foo: 0, bar: 1 }
 
   has_attached_file :attachment
@@ -97,7 +104,7 @@ In this case the migration would be something like this:
   def change
     create_table :imports do |t|
       t.integer :kind, null: false
-      t.integer :state, default: 0, null: false
+      t.string :state, default: 'waiting', null: false
       t.json :notes, default: []
       t.json  :options, default: {}
       t.json :meta, default: {}
@@ -339,6 +346,7 @@ end
 ```
 
 ## Complete Examples
+
 ### XLSX Input Example
 
 ```ruby
@@ -371,6 +379,7 @@ class XlsxInputExample
   end
 end
 ```
+
 ### CSV Input Example
 
 ```ruby
@@ -410,6 +419,7 @@ class CsvInputExample
   end
 end
 ```
+
 ### CSV Output Example
 
 ```ruby
@@ -456,6 +466,7 @@ class CsvOutputExample
 
 end
 ```
+
 ### XLSX Output Example
 
 ```ruby

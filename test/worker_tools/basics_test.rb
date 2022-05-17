@@ -122,6 +122,16 @@ describe WorkerTools::Basics do
       assert_includes err.message, err_message
       assert import.failed?
     end
+
+    it 'sets the model to running state' do
+      import = create_import
+      importer = Importer.new
+      importer.model = import
+      importer.stubs(:finalize) # do not set it to complete
+      importer.perform
+
+      assert_equal(import.state, 'running')
+    end
   end
 
   describe '#finalize' do

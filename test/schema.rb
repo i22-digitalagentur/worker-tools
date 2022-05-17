@@ -3,7 +3,7 @@ ActiveRecord::Schema.define do
 
   create_table :imports, force: true do |t|
     t.integer 'kind', null: false
-    t.integer 'state', default: 0, null: false
+    t.string 'state', default: 'waiting', null: false
     t.json 'notes', default: []
     t.json 'meta', default: {}
     t.timestamps
