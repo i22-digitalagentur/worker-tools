@@ -48,6 +48,9 @@ module WorkerTools
     end
 
     def with_wrapper_basics(&block)
+      model.state = 'running'
+      model.save!(validate: false)
+
       block.yield
       finalize
     # this time we do want to catch Exception to attempt to handle some of the
