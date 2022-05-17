@@ -448,6 +448,7 @@ class CsvOutputExample
 
 end
 ```
+### XLSX Output Example
 
 ```ruby
 # ExampleXlsxOutput
