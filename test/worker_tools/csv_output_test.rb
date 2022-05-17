@@ -14,10 +14,6 @@ describe WorkerTools::CsvOutput do
     def model_kind
       'foo_test'
     end
-
-    def create_model_if_not_available
-      true
-    end
   end
 
   it 'needs csv_output_column_headers to be defined' do

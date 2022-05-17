@@ -14,10 +14,6 @@ describe WorkerTools::XlsxOutput do
     def model_kind
       'foo_test'
     end
-
-    def create_model_if_not_available
-      true
-    end
   end
 
   it 'needs xlsx_output_entries to be defined' do
