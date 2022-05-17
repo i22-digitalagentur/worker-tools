@@ -318,7 +318,7 @@ The modules that generate a file expect the model to provide an `add_attachment`
   end
 ```
 
-You can skip this convention overwriting the module related method, for example after including `CsvOutput`
+You can skip this convention by overwriting the module related method, for example after including `CsvOutput`
 
 ```ruby
 def csv_output_add_attachment
