@@ -20,16 +20,9 @@ module WorkerTools
       raise "csv_output_column_headers has to be defined in #{self}"
     end
 
-    # rubocop:disable Lint/UnusedMethodArgument
     def csv_output_row_values(entry)
-      # Ex:
-      # {
-      #   foo: entry.foo,
-      #   bar: entry.bar
-      # }.values_at(*csv_output_column_headers.keys)
-      raise "csv_output_row_values has to be defined in #{self}"
+      entry.values_at(*csv_output_column_headers.keys)
     end
-    # rubocop:enable Lint/UnusedMethodArgument
 
     def csv_output_tmp_file
       @csv_output_tmp_file ||= Tempfile.new(['output', '.csv'])

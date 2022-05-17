@@ -1,19 +1,8 @@
 require 'rubyXL'
 module WorkerTools
   module XlsxOutput
-    def xlsx_output_content
-      {
-        sheet1: {
-          label: 'Sheet 1',
-          headers: xlsx_output_column_headers,
-          rows: xlsx_output_row_values,
-          column_style: xlsx_output_column_format
-        }
-      }
-    end
-
-    def xlsx_output_row_values
-      raise "xlsx_output_row_values has to be defined in #{self}"
+    def xlsx_output_entries
+      raise "xlsx_output_entries has to be defined in #{self}"
     end
 
     def xlsx_output_column_headers
@@ -28,6 +17,21 @@ module WorkerTools
       #   bar: 'Bar Header'
       # }
       raise "xlsx_output_column_headers has to be defined in #{self}"
+    end
+
+    def xlsx_output_content
+      {
+        sheet1: {
+          label: 'Sheet 1',
+          headers: xlsx_output_column_headers,
+          rows: xlsx_output_entries.lazy.map { |entry| xlsx_output_row_values(entry) },
+          column_style: xlsx_output_column_format
+        }
+      }
+    end
+
+    def xlsx_output_row_values(entry)
+      entry.values_at(*xlsx_output_column_headers.keys)
     end
 
     def xlsx_output_column_format

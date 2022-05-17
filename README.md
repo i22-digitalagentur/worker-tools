@@ -22,6 +22,8 @@
     <li><a href="#module-slackerrornotifier">Module 'SlackErrorNotifier'</a></li>
     <li><a href="#wrappers">Wrappers</a></li>
     <li><a href="#module-notes">Module 'Notes'</a></li>
+    <li><a href="#attachments">Attachments</a></li>
+    <li><a href="#complete-examples">Complete Examples</a></li>
     <li><a href="#requirements">Requirements</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -245,7 +247,7 @@ def perform(model_id)
 end
 ```
 
-## Counters
+## Counter
 
 There is a counter wrapper that you can use to add custom counters to the meta attribute. To do this, you need to complete the following tasks:
 
@@ -305,6 +307,184 @@ If you use ActiveRecord you may need to modify the serializer as well as deseria
 ```
 
 See all methods in [utils](/lib/worker_tools/utils)
+
+## Attachments
+
+The modules that generate a file expect the model to provide an `add_attachment` method with following signature:
+
+```ruby
+  def add_attachment(file, file_name: nil, content_type: nil)
+    # your logic
+  end
+```
+
+You can skip this convention overwriting the module related method, for example after including `CsvOutput`
+
+```ruby
+def csv_output_add_attachment
+  # default implementation
+  # model.add_attachment(csv_output_tmp_file, file_name: csv_output_file_name, content_type: 'text/csv')
+
+  # your method
+  ftp_upload(csv_output_tmp_file)
+end
+```
+
+## Complete Examples
+
+```ruby
+# Example with XlsxInput
+class XlsxInputExample
+  include Sidekiq::Worker
+  include WorkerTools::Basics
+  include WorkerTools::Recorder
+  include WorkerTools::XlsxInput
+
+  wrappers %i[basics recorder]
+
+  def model_class
+    Import
+  end
+
+  def model_kind
+    'xlsx_input_example'
+  end
+
+  def run
+    xlsx_input_foreach.each { |row| SomeModel.create!(row) }
+  end
+
+  def xlsx_input_columns
+    {
+      foo: 'Your Foo',
+      bar: 'Your Bar'
+    }
+  end
+end
+```
+
+```ruby
+# Example with CsvInput
+class CsvInputExample
+  include Sidekiq::Worker
+  include WorkerTools::Basics
+  include WorkerTools::Recorder
+  include WorkerTools::CsvInput
+
+  wrappers %i[basics recorder]
+
+  def model_class
+    Import
+  end
+
+  def model_kind
+    'csv_input_example'
+  end
+
+  def csv_input_columns
+    {
+      flavour: 'Flavour',
+      number: 'Number'
+    }
+  end
+
+  def run
+    csv_input_foreach.map { |row| do_something row_to_attributes(row) }
+  end
+
+  def row_to_attributes(row)
+    {
+      flavour: row['flavour'].downcase,
+      number: row['number'].to_i * 10
+    }
+  end
+end
+```
+
+```ruby
+# More complex example with CsvOutput
+class CsvOutputExample
+  include Sidekiq::Worker
+  include WorkerTools::Basics
+  include WorkerTools::CsvOutput
+  include WorkerTools::Recorder
+
+  wrappers %i[basics recorder]
+
+  def model_class
+    Report
+  end
+
+  def model_kind
+    'csv_out_example'
+  end
+
+  def model_file_name
+    "#{model_kind}-#{Date.current}.csv"
+  end
+
+  def run
+    csv_output_write_file
+  end
+
+  def csv_output_column_headers
+    @csv_output_column_headers ||= {
+      foo: 'Foo',
+      bar: 'Bar'
+    }
+  end
+
+  def csv_output_entries
+    @csv_output_entries ||= User.includes(...).lazy.map do |user|
+      {
+        foo: user.foo,
+        bar: user.bar
+      }
+    end
+  end
+
+end
+```
+
+```ruby
+# ExampleXlsxOutput
+class XlsxOutputExample
+  include Sidekiq::Worker
+  include WorkerTools::Basics
+  include WorkerTools::Recorder
+  include WorkerTools::XlsxOutput
+
+  wrappers %i[basics recorder]
+
+  def model_class
+    Export
+  end
+
+  def model_kind
+    'xlsx_output_example'
+  end
+
+  def run
+    xlsx_output_write_file
+  end
+
+  def xlsx_output_column_headers
+    @xlsx_output_column_headers ||= {
+      foo: 'Foo',
+      bar: 'Bar'
+    }
+  end
+
+  def xlsx_output_entries
+    @xlsx_output_entries ||= SomeArray.map do |entry|
+      {
+        foo: user.foo,
+        bar: user.bar
+      }
+    end
+  end
+end
+```
 
 ## Requirements
 

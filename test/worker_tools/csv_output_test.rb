@@ -32,12 +32,6 @@ describe WorkerTools::CsvOutput do
     assert_includes err.message, 'csv_output_entries has to be defined in'
   end
 
-  it 'needs csv_output_row_values(arg) to be defined' do
-    klass = FooCsvOutput.new
-    err = assert_raises(RuntimeError) { klass.csv_output_row_values(1) }
-    assert_includes err.message, 'csv_output_row_values has to be defined in'
-  end
-
   describe 'csv file output' do
     class FooCorrect < FooCsvOutput
       def csv_output_column_headers
@@ -60,10 +54,6 @@ describe WorkerTools::CsvOutput do
             col_3: 'cell_2.3'
           }
         ]
-      end
-
-      def csv_output_row_values(entry)
-        entry.values_at(*csv_output_column_headers.keys)
       end
     end
 
