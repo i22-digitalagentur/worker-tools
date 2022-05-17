@@ -363,6 +363,7 @@ class XlsxInputExample
   end
 end
 ```
+### CSV Input Example
 
 ```ruby
 # Example with CsvInput
