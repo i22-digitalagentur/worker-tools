@@ -47,7 +47,9 @@ module WorkerTools
     end
 
     def xlsx_input_header_normalized(name)
-      name.to_s.strip.downcase
+      # some elements return obj.to_s => nil
+      # for example [#<Roo::Excelx::Cell::Empty:0x0000000af8d4c8 ... @value=nil>]
+      name&.to_s&.strip&.downcase || ''
     end
 
     # Allows for some basic cleanup of the values, such as applying strip to
