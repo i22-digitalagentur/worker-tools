@@ -402,6 +402,7 @@ class CsvInputExample
   end
 end
 ```
+### CSV Output Example
 
 ```ruby
 # More complex example with CsvOutput
