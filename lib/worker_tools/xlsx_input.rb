@@ -70,7 +70,8 @@ module WorkerTools
       actual_columns_length = xlsx_rows_enum.first.length
       return if expected_columns_length == actual_columns_length
 
-      raise "The number of columns (#{actual_columns_length}) is not the expected (#{expected_columns_length})"
+      msg = "The number of columns (#{actual_columns_length}) is not the expected (#{expected_columns_length})"
+      raise Errors::WrongNumberOfColumns, msg
     end
 
     def xlsx_input_columns_hash_check(xlsx_rows_enum)
@@ -82,7 +83,9 @@ module WorkerTools
 
     def xlsx_input_columns_hash_check_duplicates(names)
       dups = names.group_by(&:itself).select { |_, v| v.count > 1 }.keys
-      raise "The file contains duplicated columns: #{dups}" if dups.present?
+      return unless dups.present?
+
+      raise Errors::DuplicatedColumns, "The file contains duplicated columns: #{dups}"
     end
 
     def xlsx_input_columns_hash_check_missing(actual_names, expected_names)
@@ -90,7 +93,7 @@ module WorkerTools
         matchable = name.is_a?(String) ? xlsx_input_header_normalized(name) : name
         actual_names.any? { |n| case n when matchable then true end } # rubocop does not like ===
       end
-      raise "Some columns are missing: #{missing}" unless missing.empty?
+      raise Errors::MissingColumns, "Some columns are missing: #{missing}" unless missing.empty?
     end
 
     # Compares the first row (header names) with the xlsx_input_columns hash to find

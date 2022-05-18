@@ -18,13 +18,13 @@ describe WorkerTools::XlsxOutput do
 
   it 'needs xlsx_output_entries to be defined' do
     klass = FooXlsxOutput.new
-    err = assert_raises(RuntimeError) { klass.xlsx_output_entries }
+    err = assert_raises(StandardError) { klass.xlsx_output_entries }
     assert_includes err.message, 'xlsx_output_entries has to be defined in'
   end
 
   it 'needs xlsx_output_column_headers to be defined' do
     klass = FooXlsxOutput.new
-    err = assert_raises(RuntimeError) { klass.xlsx_output_column_headers }
+    err = assert_raises(StandardError) { klass.xlsx_output_column_headers }
     assert_includes err.message, 'xlsx_output_column_headers has to be defined in'
   end
 

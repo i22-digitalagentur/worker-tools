@@ -33,7 +33,7 @@ describe WorkerTools::CsvInput do
   end
 
   it 'needs csv_input_columns to be defined' do
-    err = assert_raises(RuntimeError) { FooWithoutCsvInputColumns.new.csv_input_columns }
+    err = assert_raises(StandardError) { FooWithoutCsvInputColumns.new.csv_input_columns }
     assert_includes err.message, 'csv_input_columns has to be defined in'
   end
 
@@ -72,7 +72,7 @@ describe WorkerTools::CsvInput do
       it 'raise an exception if column amount differs' do
         @klass.stubs(:csv_input_columns).returns(%w[foo])
         csv_enum = [%w[foo foo2], %w[test test2]]
-        err = assert_raises(RuntimeError) { @klass.csv_input_columns_check(csv_enum) }
+        err = assert_raises(WorkerTools::Errors::WrongNumberOfColumns) { @klass.csv_input_columns_check(csv_enum) }
         assert_includes err.message, 'The number of columns'
       end
 
@@ -93,7 +93,7 @@ describe WorkerTools::CsvInput do
     describe 'raises on duplication' do
       it 'should raise on duplicated columns' do
         csv_enum = [%w[foo foo Col\ 1 Col\ 3], %w[test test2 tes test]]
-        err = assert_raises(RuntimeError) { @klass.csv_input_columns_check(csv_enum) }
+        err = assert_raises(WorkerTools::Errors::DuplicatedColumns) { @klass.csv_input_columns_check(csv_enum) }
         assert_includes err.message, 'The file contains duplicated columns:'
       end
     end
@@ -106,15 +106,15 @@ describe WorkerTools::CsvInput do
           col_3: ->(name) { name.downcase == 'col 3' }
         )
         csv_enum = [['Col X', 'Col 2', 'Col 3'], %w[test test test]]
-        err = assert_raises(RuntimeError) { @klass.csv_input_columns_check(csv_enum) }
+        err = assert_raises(WorkerTools::Errors::MissingColumns) { @klass.csv_input_columns_check(csv_enum) }
         assert_includes err.message, 'Some columns are missing:'
 
         csv_enum = [['Col 1', 'Col X', 'Col 3'], %w[test test test]]
-        err = assert_raises(RuntimeError) { @klass.csv_input_columns_check(csv_enum) }
+        err = assert_raises(WorkerTools::Errors::MissingColumns) { @klass.csv_input_columns_check(csv_enum) }
         assert_includes err.message, 'Some columns are missing:'
 
         csv_enum = [['Col 1', 'Col 2', 'Col X'], %w[test test test]]
-        err = assert_raises(RuntimeError) { @klass.csv_input_columns_check(csv_enum) }
+        err = assert_raises(WorkerTools::Errors::MissingColumns) { @klass.csv_input_columns_check(csv_enum) }
         assert_includes err.message, 'Some columns are missing:'
 
         csv_enum = [['Col 1', 'Col 2', 'Col 3'], %w[test test test]]

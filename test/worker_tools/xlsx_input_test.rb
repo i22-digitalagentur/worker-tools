@@ -21,7 +21,7 @@ describe WorkerTools::XlsxInput do
   end
 
   it 'needs xlsx_input_columns to be defined' do
-    err = assert_raises(RuntimeError) { FooWithoutXlsxInputColumns.new.xlsx_input_columns }
+    err = assert_raises(StandardError) { FooWithoutXlsxInputColumns.new.xlsx_input_columns }
     assert_includes err.message, 'xlsx_input_columns has to be defined in'
   end
 
@@ -54,7 +54,7 @@ describe WorkerTools::XlsxInput do
       it 'raise an exception if column amount differs' do
         @klass.stubs(:xlsx_input_columns).returns(%w[foo])
         xlsx_enum = [%w[foo foo2], %w[test test2]]
-        err = assert_raises(RuntimeError) { @klass.xlsx_input_columns_check(xlsx_enum) }
+        err = assert_raises(WorkerTools::Errors::WrongNumberOfColumns) { @klass.xlsx_input_columns_check(xlsx_enum) }
         assert_includes err.message, 'The number of columns'
       end
 
@@ -75,7 +75,7 @@ describe WorkerTools::XlsxInput do
     describe 'raises on duplication' do
       it 'should raise on duplicated columns' do
         xlsx_enum = [%w[foo foo Col\ 1 Col\ 3], %w[test test2 tes test]]
-        err = assert_raises(RuntimeError) { @klass.xlsx_input_columns_check(xlsx_enum) }
+        err = assert_raises(WorkerTools::Errors::DuplicatedColumns) { @klass.xlsx_input_columns_check(xlsx_enum) }
         assert_includes err.message, 'The file contains duplicated columns:'
       end
     end
@@ -88,15 +88,15 @@ describe WorkerTools::XlsxInput do
           col_3: ->(name) { name.downcase == 'col 3' }
         )
         xlsx_enum = [['Col X', 'Col 2', 'Col 3'], %w[test test test]]
-        err = assert_raises(RuntimeError) { @klass.xlsx_input_columns_check(xlsx_enum) }
+        err = assert_raises(WorkerTools::Errors::MissingColumns) { @klass.xlsx_input_columns_check(xlsx_enum) }
         assert_includes err.message, 'Some columns are missing:'
 
         xlsx_enum = [['Col 1', 'Col X', 'Col 3'], %w[test test test]]
-        err = assert_raises(RuntimeError) { @klass.xlsx_input_columns_check(xlsx_enum) }
+        err = assert_raises(WorkerTools::Errors::MissingColumns) { @klass.xlsx_input_columns_check(xlsx_enum) }
         assert_includes err.message, 'Some columns are missing:'
 
         xlsx_enum = [['Col 1', 'Col 2', 'Col X'], %w[test test test]]
-        err = assert_raises(RuntimeError) { @klass.xlsx_input_columns_check(xlsx_enum) }
+        err = assert_raises(WorkerTools::Errors::MissingColumns) { @klass.xlsx_input_columns_check(xlsx_enum) }
         assert_includes err.message, 'Some columns are missing:'
 
         xlsx_enum = [['Col 1', 'Col 2', 'Col 3'], %w[test test test]]
