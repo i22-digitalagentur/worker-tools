@@ -48,18 +48,17 @@ module WorkerTools
     end
 
     def with_wrapper_basics(&block)
-      model.state = 'running'
-      model.save!(validate: false)
-
+      save_state_without_validate('running')
       block.yield
       finalize
     # this time we do want to catch Exception to attempt to handle some of the
     # critical errors.
     # rubocop:disable Lint/RescueException
-    rescue Exception
+    rescue Exception => e
+      return finalize if non_failure_error?(e)
+
       # rubocop:enable Lint/RescueException
-      model.state = 'failed'
-      model.save!(validate: false)
+      save_state_without_validate('failed')
       raise
     end
 
@@ -86,7 +85,18 @@ module WorkerTools
       send(current_wrapper_symbol) { with_wrappers(wrapper_symbols, &block) }
     end
 
+    def non_failure_error?(error)
+      error.is_a?(WorkerTools::Errors::Invalid)
+      # or add your list
+      # [WorkerTools::Errors::Invalid, SomeOtherError].any? { |k| e.is_a?(k) }
+    end
+
     private
+
+    def save_state_without_validate(state)
+      model.state = state
+      model.save!(validate: false)
+    end
 
     def find_model
       @model_id ||= nil
