@@ -63,7 +63,8 @@ module WorkerTools
       actual_columns_length = csv_rows_enum.first.length
       return if expected_columns_length == actual_columns_length
 
-      raise "The number of columns (#{actual_columns_length}) is not the expected (#{expected_columns_length})"
+      msg = "The number of columns (#{actual_columns_length}) is not the expected (#{expected_columns_length})"
+      raise Errors::WrongNumberOfColumns, msg
     end
 
     def csv_input_columns_hash_check(csv_rows_enum)
@@ -75,7 +76,9 @@ module WorkerTools
 
     def csv_input_columns_hash_check_duplicates(names)
       dups = names.group_by(&:itself).select { |_, v| v.count > 1 }.keys
-      raise "The file contains duplicated columns: #{dups}" if dups.present?
+      return unless dups.present?
+
+      raise Errors::DuplicatedColumns, "The file contains duplicated columns: #{dups}"
     end
 
     def csv_input_columns_hash_check_missing(actual_names, expected_names)
@@ -83,7 +86,7 @@ module WorkerTools
         matchable = name.is_a?(String) ? csv_input_header_normalized(name) : name
         actual_names.any? { |n| case n when matchable then true end } # rubocop does not like ===
       end
-      raise "Some columns are missing: #{missing}" unless missing.empty?
+      raise Errors::MissingColumns, "Some columns are missing: #{missing}" unless missing.empty?
     end
 
     def csv_input_csv_options

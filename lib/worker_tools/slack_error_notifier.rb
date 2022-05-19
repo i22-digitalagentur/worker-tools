@@ -5,12 +5,16 @@ module WorkerTools
     def with_wrapper_slack_error_notifier(&block)
       block.yield
     rescue StandardError => e
-      slack_error_notify(e) if slack_error_notifier_enabled
+      slack_error_notify(e) if slack_error_notifier_enabled && slack_error_notifiable?(e)
       raise
     end
 
     def slack_error_notifier_enabled
       Rails.env.production?
+    end
+
+    def slack_error_notifiable?(error)
+      error.is_a?(StandardError)
     end
 
     def slack_error_notifier_emoji

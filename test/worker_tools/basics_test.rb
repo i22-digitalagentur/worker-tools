@@ -52,7 +52,7 @@ describe WorkerTools::Basics do
     end
   end
 
-  it 'needs model class, model kind, and run to be defined' do
+  it 'raises an error if model class, model kind, or run are not defined' do
     importer = Foo.new
 
     err = assert_raises(StandardError) { importer.model_class }
@@ -121,6 +121,14 @@ describe WorkerTools::Basics do
       err = assert_raises(StandardError) { importer.perform(import) }
       assert_includes err.message, err_message
       assert import.failed?
+    end
+
+    it 'does not raise or mark as failed after a non failure error' do
+      import = create_import
+      importer = Importer.new
+      importer.expects(:run).raises(WorkerTools::Errors::WrongNumberOfColumns)
+      importer.perform(import)
+      assert import.complete?
     end
 
     it 'sets the model to running state' do
