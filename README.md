@@ -144,6 +144,8 @@ end
 
 The basics module contains a `perform` method, which is the usual entry point for ApplicationJob and Sidekiq. It can receive the id of the model, the model instance, or nothing, in which case it will attempt to create this model on its own.
 
+By default errors subclassed from WorkerTools::Errors::Invalid (such as those related to wrong headers in the input modules) will not raise and mark the model as failed. The method `non_failure_error?` lets you modifiy this behaviour.
+
 ## Module 'Recorder'
 
 Provides some methods to manage a log and the `notes` field of the model. The main methods are `add_info`, `add_log`, and `record` (which both logs and appends the message to the notes field). See all methods in [recorder](/lib/worker_tools/recorder.rb)
