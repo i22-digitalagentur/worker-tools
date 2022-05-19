@@ -16,13 +16,13 @@ describe WorkerTools::CsvOutput do
     end
   end
 
-  it 'needs csv_output_column_headers to be defined' do
+  it 'raises an error if csv_output_column_headers are not defined' do
     klass = FooCsvOutput.new
     err = assert_raises(StandardError) { klass.csv_output_column_headers }
     assert_includes err.message, 'csv_output_column_headers has to be defined in'
   end
 
-  it 'needs csv_output_entries to be defined' do
+  it 'raises an error if csv_output_entries are not defined' do
     klass = FooCsvOutput.new
     err = assert_raises(StandardError) { klass.csv_output_entries }
     assert_includes err.message, 'csv_output_entries has to be defined in'

@@ -52,7 +52,7 @@ describe WorkerTools::Basics do
     end
   end
 
-  it 'needs model class, model kind, and run to be defined' do
+  it 'raises an error if model class, model kind, or run are not defined' do
     importer = Foo.new
 
     err = assert_raises(StandardError) { importer.model_class }
