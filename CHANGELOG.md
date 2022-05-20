@@ -41,4 +41,4 @@ Compared to 0.2.1
 - `xlsx_ensure_output_target_folder`
 - `xlsx_write_output_target`
 
-[1.0.0]: https://github.com/i22-digitalagentur/worker-tools/compare/v0.2.1...v1.0.0
+[1.0.0]: https://github.com/i22-digitalagentur/worker-tools/compare/0.2.1...1.0.0
