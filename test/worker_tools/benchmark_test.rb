@@ -1,9 +1,9 @@
 require 'test_helper'
 
-describe WorkerTools::CustomBenchmark do
-  class CustomBenchmark
+describe WorkerTools::Benchmark do
+  class BenchmarkTest
     include WorkerTools::Basics
-    include WorkerTools::CustomBenchmark
+    include WorkerTools::Benchmark
 
     wrappers :basics, :benchmark
 
@@ -21,8 +21,8 @@ describe WorkerTools::CustomBenchmark do
   describe '#with_wrapper_benchmark' do
     before :each do
       @import = create_import
-      @importer = CustomBenchmark.new
-      Benchmark.expects(:measure).returns(stub(real: 2))
+      @importer = BenchmarkTest.new
+      ::Benchmark.expects(:measure).returns(stub(real: 2))
     end
 
     it 'should call benchmark.measure function' do
