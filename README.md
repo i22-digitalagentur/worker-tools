@@ -285,11 +285,13 @@ class MyImporter
   end
 
   def example_foo_counter_methods
-    self.foo = 0
-
+    # you can use the increment helper
     10.times { increment_foo }
 
-    puts foo # foo == 10
+    # the counter works like a regular accessor, you can read it and modify it
+    # directly
+    self.bar = 100
+    puts bar # => 100
   end
 
   # ..
