@@ -32,6 +32,7 @@
         <li><a href="#xlsx-output-example">XLSX Output Example</a></li>
       </ul>
     </li>
+    <li><a href="#changelog">Changelog</a></li>
     <li><a href="#requirements">Requirements</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -352,7 +353,6 @@ end
 ### XLSX Input Example
 
 ```ruby
-# Example with XlsxInput
 class XlsxInputExample
   include Sidekiq::Worker
   include WorkerTools::Basics
@@ -385,7 +385,6 @@ end
 ### CSV Input Example
 
 ```ruby
-# Example with CsvInput
 class CsvInputExample
   include Sidekiq::Worker
   include WorkerTools::Basics
@@ -510,6 +509,10 @@ class XlsxOutputExample
   end
 end
 ```
+
+## Changelog
+
+See [CHANGELOG](CHANGELOG.md)
 
 ## Requirements
 
