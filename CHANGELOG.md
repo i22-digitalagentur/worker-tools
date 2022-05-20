@@ -4,7 +4,7 @@
 
 Compared to 0.2.1
 
-### Added
+### New
 
 - Namespaced errors and non failure logic
 - Support for status running and complete_with_warnings
@@ -15,18 +15,22 @@ Compared to 0.2.1
 - Model attachments convention
 - Complete specification of csv open arguments
 
-### Changed
+### BREAKING CHANGES
 
-- Instead of writing the final csv or xlsx to a folder, the gem assumes that the model provides an add_attachment method.
-- Both csv and xlsx output modules use entry hashes for content (`csv_output_entries`, `xlsx_output_entries`). The mapper methods `csv_output_row_values` and `xlsx_output_row_values` do not need (in most cases) to be defined, there is a default now. See the complete examples in the README.
-- Renamed `xlsx_output_values` => `xlsx_output_row_values`
-- Renamed `xlsx_insert_headers` => `xlsx_output_insert_headers`
-- Renamed `xlsx_insert_rows` => ` xlsx_output_insert_rows`
-- Renamed `xlsx_iterators` => `xlsx_output_iterators`
-- Renamed `xlsx_style_columns` => `xlsx_output_style_columns`
-- Renamed `xlsx_write_sheet` => `xlsx_output_write_sheet`
+Instead of writing the final csv or xlsx to a folder, the gem assumes that the model provides an add_attachment method.
 
-### Removed
+Both csv and xlsx output modules use entry hashes for content (`csv_output_entries`, `xlsx_output_entries`). The mapper methods `csv_output_row_values` and `xlsx_output_row_values` do not need (in most cases) to be defined, there is a default now. See the complete examples in the README.
+
+These methods were renamed
+
+- `xlsx_output_values` => `xlsx_output_row_values`
+- `xlsx_insert_headers` => `xlsx_output_insert_headers`
+- `xlsx_insert_rows` => ` xlsx_output_insert_rows`
+- `xlsx_iterators` => `xlsx_output_iterators`
+- `xlsx_style_columns` => `xlsx_output_style_columns`
+- `xlsx_write_sheet` => `xlsx_output_write_sheet`
+
+These methods were removed
 
 - `add_info` in favor of `add_note`
 - `create_model_if_not_available`, a model is always created.
