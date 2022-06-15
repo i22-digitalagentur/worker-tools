@@ -207,6 +207,10 @@ See all methods in [csv_output](/lib/worker_tools/csv_output.rb)
 
 See all methods in [xlsx_input](/lib/worker_tools/xlsx_input.rb)
 
+## Module XLSX Output
+
+See all methods in [xlsx_output](/lib/worker_tools/xlsx_output.rb)
+
 ## Wrappers
 
 In the [basics module](/lib/worker_tools/basics.rb), `perform` calls your custom method `run` to do the actual work of the task, and wraps it around any methods expecting a block that you might have had defined using `wrappers`. That gives us a systematic way to add logic depending on the output of `run` and any exceptions that might arise, such as logging the error and context, sending a chat notification, retrying under some circumstances, etc.
