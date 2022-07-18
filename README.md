@@ -463,7 +463,7 @@ class CsvOutputExample
   end
 
   def csv_output_entries
-    @csv_output_entries ||= User.includes(...).lazy.map do |user|
+    @csv_output_entries ||= User.includes(...).find_each do |user|
       {
         foo: user.foo,
         bar: user.bar
@@ -506,7 +506,7 @@ class XlsxOutputExample
   end
 
   def xlsx_output_entries
-    @xlsx_output_entries ||= SomeArray.map do |entry|
+    @xlsx_output_entries ||= SomeArray.lazy.map do |entry|
       {
         foo: user.foo,
         bar: user.bar
