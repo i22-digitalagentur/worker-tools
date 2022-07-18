@@ -7,7 +7,7 @@ module WorkerTools
 
       def with_wrapper_benchmark(&block)
         @benchmark = ::Benchmark.measure(&block)
-
+      ensure
         model.meta['duration'] = @benchmark.real.round if model.respond_to?(:meta)
       end
     end
