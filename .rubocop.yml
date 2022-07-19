@@ -1,7 +1,7 @@
 # See all options in these files:
-  # https://github.com/bbatsov/rubocop/blob/master/config/default.yml
-  # https://github.com/bbatsov/rubocop/blob/master/config/enabled.yml
-  # https://github.com/bbatsov/rubocop/blob/master/config/disabled.yml
+# https://github.com/bbatsov/rubocop/blob/master/config/default.yml
+# https://github.com/bbatsov/rubocop/blob/master/config/enabled.yml
+# https://github.com/bbatsov/rubocop/blob/master/config/disabled.yml
 
 # run bundle exec rubocop -D to see what cop is reporting
 
@@ -11,7 +11,7 @@
 # rubocop:enable LineLength
 
 AllCops:
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.7
   Exclude:
     - bin/*
     - Rakefile
