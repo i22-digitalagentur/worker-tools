@@ -33,5 +33,17 @@ describe WorkerTools::Benchmark do
       @importer.perform(@import)
       expect(@importer.model.meta['duration']).must_equal 2
     end
+
+    it 'assigns the duration even if the block fails' do
+      def @importer.run
+        sleep 1
+        raise StandardError
+      end
+
+      ::Benchmark.unstub(:measure)
+
+      assert_raises(StandardError) { @importer.perform(@import) }
+      expect(@importer.model.meta['duration'] >= 1).must_equal true
+    end
   end
 end
