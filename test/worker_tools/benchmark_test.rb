@@ -44,6 +44,14 @@ describe WorkerTools::Benchmark do
 
       assert_raises(StandardError) { @importer.perform(@import) }
       expect(@importer.model.meta['duration'] >= 1).must_equal true
+
+      # it does not raise on a second perform
+
+      def @importer.run
+        true
+      end
+
+      @importer.perform(@import)
     end
   end
 end
