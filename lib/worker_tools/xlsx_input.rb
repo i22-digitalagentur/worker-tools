@@ -138,14 +138,20 @@ module WorkerTools
       end
     end
 
+    def xlsx_input_headers_present
+      true
+    end
+
     def xlsx_input_foreach
       @xlsx_input_foreach ||= begin
         xlsx_input_columns_check(xlsx_rows_enum)
 
         XlsxInputForeach.new(
           rows_enum: xlsx_rows_enum,
+          input_columns: xlsx_input_columns,
           mapping_order: xlsx_input_mapping_order(xlsx_rows_enum.first),
-          cleanup_method: method(:xlsx_input_value_cleanup)
+          cleanup_method: method(:xlsx_input_value_cleanup),
+          headers_present: xlsx_input_headers_present
         )
       end
     end
@@ -153,26 +159,39 @@ module WorkerTools
     class XlsxInputForeach
       include Enumerable
 
-      def initialize(rows_enum:, mapping_order:, cleanup_method:)
+      def initialize(rows_enum:, input_columns:, mapping_order:, cleanup_method:, headers_present:)
         @rows_enum = rows_enum
+        @input_columns = input_columns
         @mapping_order = mapping_order
         @cleanup_method = cleanup_method
+        @headers_present = headers_present
       end
 
       def each
         return enum_for(:each) unless block_given?
 
         @rows_enum.with_index.each do |values, index|
-          next if index.zero? # headers
+          next if index.zero? && @headers_present
 
           yield values_to_row(values)
         end
       end
 
       def values_to_row(values)
+        return values_to_row_according_to_mapping(values) if @mapping_order
+
+        values_to_row_according_to_position(values)
+      end
+
+      def values_to_row_according_to_mapping(values)
         @mapping_order.each_with_object(HashWithIndifferentAccess.new) do |(k, v), h|
           h[k] = @cleanup_method.call(values[v].try(:value))
         end
+      end
+
+      def values_to_row_according_to_position(values)
+        @input_columns
+          .map.with_index { |c, i| [c, @cleanup_method.call(values[i].try(:value))] }.to_h.with_indifferent_access
       end
     end
   end
