@@ -2,9 +2,9 @@ module WorkerTools
   Error = Class.new(StandardError)
 
   module Errors
-    Invalid = Class.new(Error)
-    WrongNumberOfColumns = Class.new(Invalid)
-    DuplicatedColumns = Class.new(Invalid)
-    MissingColumns = Class.new(Invalid)
+    Silent = Class.new(Error)
+    WrongNumberOfColumns = Class.new(Silent)
+    DuplicatedColumns = Class.new(Silent)
+    MissingColumns = Class.new(Silent)
   end
 end

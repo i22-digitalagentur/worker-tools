@@ -55,11 +55,9 @@ module WorkerTools
     # critical errors.
     # rubocop:disable Lint/RescueException
     rescue Exception => e
-      return finalize if non_failure_error?(e)
-
       # rubocop:enable Lint/RescueException
       save_state_without_validate('failed')
-      raise
+      raise unless silent_error?(e)
     end
 
     def finalize
@@ -85,10 +83,10 @@ module WorkerTools
       send(current_wrapper_symbol) { with_wrappers(wrapper_symbols, &block) }
     end
 
-    def non_failure_error?(error)
-      error.is_a?(WorkerTools::Errors::Invalid)
+    def silent_error?(error)
+      error.is_a?(WorkerTools::Errors::Silent)
       # or add your list
-      # [WorkerTools::Errors::Invalid, SomeOtherError].any? { |k| e.is_a?(k) }
+      # [WorkerTools::Errors::Silent, SomeOtherError].any? { |k| e.is_a?(k) }
     end
 
     private
