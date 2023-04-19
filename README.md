@@ -290,7 +290,8 @@ class MyImporter
 
   def example_foo_counter_methods
     # you can use the increment helper
-    10.times { increment_foo }
+    10.times { increment_foo } # +1
+    increment_foo(5) # +5
 
     # the counter works like a regular accessor, you can read it and modify it
     # directly
