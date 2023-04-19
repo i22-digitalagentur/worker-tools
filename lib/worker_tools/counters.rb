@@ -21,7 +21,7 @@ module WorkerTools
           define_method("#{name}=") { |value| model.meta[name] = value }
 
           # ex `increment_inserts`
-          define_method("increment_#{name}") { model.meta[name] += 1 }
+          define_method("increment_#{name}") { |inc = 1| model.meta[name] += inc }
         end
       end
 

@@ -49,11 +49,19 @@ describe WorkerTools::Counters do
     end
 
     describe '#counters_increment' do
-      it 'increments the counter by 1' do
+      it 'increments the counter by 1 by default' do
         @importer.class.read_counters.each do |counter|
           @importer.send("#{counter}=", 0)
           @importer.send("increment_#{counter}")
           expect(@importer.send(counter)).must_equal 1
+        end
+      end
+
+      it 'increments the counter by the given amount' do
+        @importer.class.read_counters.each do |counter|
+          @importer.send("#{counter}=", 0)
+          @importer.send("increment_#{counter}", 2)
+          expect(@importer.send(counter)).must_equal 2
         end
       end
     end
