@@ -131,14 +131,19 @@ describe WorkerTools::Basics do
       assert import.failed?
     end
 
-    it 'sets the model to running state' do
+    it 'sets the model to running state and clears notes and meta' do
       import = create_import
+      import.notes = [{ level: 'info', message: 'some message' }]
+      import.meta = { foo: 'bar' }
+
       importer = Importer.new
       importer.model = import
       importer.stubs(:finalize) # do not set it to complete
       importer.perform
 
       assert_equal(import.state, 'running')
+      assert_equal(import.notes, [])
+      assert_equal(import.meta, {})
     end
   end
 
