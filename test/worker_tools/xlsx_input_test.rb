@@ -5,6 +5,18 @@ describe WorkerTools::XlsxInput do
     include WorkerTools::XlsxInput
   end
 
+  class FooWithoutHeaders
+    include WorkerTools::XlsxInput
+
+    def xlsx_input_columns
+      %w[col_1 col_2 col_3]
+    end
+
+    def xlsx_input_headers_present
+      false
+    end
+  end
+
   class Foo
     include WorkerTools::XlsxInput
 
@@ -131,6 +143,15 @@ describe WorkerTools::XlsxInput do
       @klass.xlsx_input_foreach.each { |row| content << row }
       assert_equal ({ 'col_1' => 'cell_1.1', 'col 2' => 'cell_1.2', 'col_3' => 'cell_1.3' }), content.first
       assert_equal ({ 'col_1' => 'cell_2.1', 'col 2' => 'cell_2.2', 'col_3' => 'cell_2.3' }), content.second
+    end
+
+    it 'should work with files without headers' do
+      klass = FooWithoutHeaders.new
+      klass.stubs(:xlsx_input_file_path).returns(test_gem_path + '/test/fixtures/sample_without_headers.xlsx')
+
+      content = klass.xlsx_input_foreach.to_a
+      assert_equal ({ 'col_1' => 'cell_1.1', 'col_2' => 'cell_1.2', 'col_3' => 'cell_1.3' }), content.first
+      assert_equal ({ 'col_1' => 'cell_2.1', 'col_2' => 'cell_2.2', 'col_3' => 'cell_2.3' }), content.second
     end
   end
 end

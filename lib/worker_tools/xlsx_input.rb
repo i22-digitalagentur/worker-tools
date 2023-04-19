@@ -138,6 +138,10 @@ module WorkerTools
       end
     end
 
+    def xlsx_input_headers_present
+      true
+    end
+
     def xlsx_input_foreach
       @xlsx_input_foreach ||= begin
         xlsx_input_columns_check(xlsx_rows_enum)
@@ -145,7 +149,8 @@ module WorkerTools
         XlsxInputForeach.new(
           rows_enum: xlsx_rows_enum,
           mapping_order: xlsx_input_mapping_order(xlsx_rows_enum.first),
-          cleanup_method: method(:xlsx_input_value_cleanup)
+          cleanup_method: method(:xlsx_input_value_cleanup),
+          headers_present: xlsx_input_headers_present
         )
       end
     end
@@ -153,17 +158,18 @@ module WorkerTools
     class XlsxInputForeach
       include Enumerable
 
-      def initialize(rows_enum:, mapping_order:, cleanup_method:)
+      def initialize(rows_enum:, mapping_order:, cleanup_method:, headers_present:)
         @rows_enum = rows_enum
         @mapping_order = mapping_order
         @cleanup_method = cleanup_method
+        @headers_present = headers_present
       end
 
       def each
         return enum_for(:each) unless block_given?
 
         @rows_enum.with_index.each do |values, index|
-          next if index.zero? # headers
+          next if index.zero? && @headers_present
 
           yield values_to_row(values)
         end
