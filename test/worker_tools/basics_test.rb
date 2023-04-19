@@ -123,12 +123,12 @@ describe WorkerTools::Basics do
       assert import.failed?
     end
 
-    it 'does not raise or mark as failed after a non failure error' do
+    it 'does not raise after a non failure error' do
       import = create_import
       importer = Importer.new
       importer.expects(:run).raises(WorkerTools::Errors::WrongNumberOfColumns)
       importer.perform(import)
-      assert import.complete?
+      assert import.failed?
     end
 
     it 'sets the model to running state' do
