@@ -32,16 +32,11 @@ module WorkerTools
 
     def perform(model_id = nil)
       @model_id = model_id
-      reset
 
+      default_reset
       with_wrappers(wrapper_methods) do
         run
       end
-    end
-
-    def reset
-      model.attributes = { notes: [], meta: {}, state: 'running' }
-      model.save!(validate: false)
     end
 
     def wrapper_methods
@@ -54,7 +49,7 @@ module WorkerTools
     end
 
     def with_wrapper_basics(&block)
-      reset
+      custom_reset if respond_to?(:custom_reset)
       block.yield
       finalize
     # this time we do want to catch Exception to attempt to handle some of the
@@ -96,6 +91,11 @@ module WorkerTools
     end
 
     private
+
+    def default_reset
+      model.attributes = { notes: [], meta: {}, state: 'running' }
+      model.save!(validate: false)
+    end
 
     def save_state_without_validate(state)
       model.state = state
