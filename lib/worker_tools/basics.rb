@@ -49,7 +49,7 @@ module WorkerTools
     end
 
     def with_wrapper_basics(&block)
-      custom_reset if respond_to?(:custom_reset)
+      custom_reset if respond_to?(:custom_reset, true)
       block.yield
       finalize
     # this time we do want to catch Exception to attempt to handle some of the
