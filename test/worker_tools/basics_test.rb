@@ -145,6 +145,14 @@ describe WorkerTools::Basics do
       assert_equal(import.notes, [])
       assert_equal(import.meta, {})
     end
+
+    it 'calls custom_reset if defined' do
+      import = create_import
+      importer = Importer.new
+      importer.model = import
+      importer.expects(:custom_reset)
+      importer.perform
+    end
   end
 
   describe '#finalize' do
