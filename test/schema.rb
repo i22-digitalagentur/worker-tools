@@ -6,6 +6,7 @@ ActiveRecord::Schema.define do
     t.string 'state', default: 'waiting', null: false
     t.json 'notes', default: []
     t.json 'meta', default: {}
+    t.json 'options', default: {}
     t.timestamps
   end
 end

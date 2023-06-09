@@ -35,7 +35,7 @@ module WorkerTools
 
       default_reset
       with_wrappers(wrapper_methods) do
-        run
+        send(run_method)
       end
     end
 
@@ -91,6 +91,23 @@ module WorkerTools
     end
 
     private
+
+    def run_mode
+      model.try(:options).try(:[], 'run_mode')
+    end
+
+    def run_mode_option
+      model.try(:options).try(:[], 'run_mode_option').try(:to_sym)
+    end
+
+    def run_method
+      return :run unless run_mode.present?
+
+      method_name = "run_in_#{run_mode}_mode"
+      return method_name.to_sym if respond_to?(method_name, true)
+
+      raise "Missing method #{method_name}"
+    end
 
     def default_reset
       model.attributes = { notes: [], meta: {}, state: 'running' }
