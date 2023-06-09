@@ -153,6 +153,29 @@ describe WorkerTools::Basics do
       importer.expects(:custom_reset)
       importer.perform
     end
+
+    describe 'run modes' do
+      it 'calls run with the correct mode if defined in options' do
+        import = create_import
+        import.update!(options: { run_mode: 'foo', run_mode_option: 'bar' })
+        importer = Importer.new
+        importer.model = import
+        importer.expects(:run_in_foo_mode)
+        importer.perform
+
+        assert_equal(importer.send(:run_mode_option), :bar)
+      end
+
+      it 'raises if the run mode is not defined' do
+        import = create_import
+        import.update!(options: { run_mode: 'foo' })
+        importer = Importer.new
+        importer.model = import
+
+        err = assert_raises(StandardError) { importer.perform }
+        assert_includes err.message, 'run_in_foo_mode'
+      end
+    end
   end
 
   describe '#finalize' do
