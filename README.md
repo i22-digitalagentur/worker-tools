@@ -269,6 +269,35 @@ def perform(model_id)
 end
 ```
 
+## Run Modes
+
+It is possible to run the same task in different modes by providing the key `run_mode` inside `options`. For example, by setting it to `:destroy`, the method `run_in_destroy_mode` will get called instead of the usual `run`
+
+```ruby
+    # options[:run_mode] = :destroy
+
+    def run_in_destroy_mode
+      # add_some note
+      # delete plenty of stuff, take your time
+    end
+```
+
+As a convention, use `options[:run_mode_option]` to provide more context:
+
+```ruby
+    # options[:run_mode] = :destroy
+    # options[:run_mode_option] = :all / :only_foos / :only_bars
+    def run_in_destroy_mode
+      case run_mode_option
+      when :all then kaboom
+      when :only_foos then delete_foos
+      when :only_bars then delete_bars
+      end
+    end
+```
+
+If the corresponding run method is not available an exeception will be raised. A special case is the run_mode `:repeat` which will try to use the method `:run_in_repeat_mode` and fallback to `run` if not present.
+
 ## Counter
 
 There is a counter wrapper that you can use to add custom counters to the meta attribute. To do this, you need to complete the following tasks:

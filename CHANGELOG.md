@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.1.0] - 2023-07-13
+
+### New
+
+- Custom run_modes
+- XlsxInput without headers
+- Custom reset hook
+- Increment counters by a given amount
+
+### BREAKING CHANGES
+
+`WorkerTools::Errors::Invalid` has being replaced with `WorkerTools::Errors::Silent`
+
+The method `non_failure_error?` has being replaced with `silent_error?`
+
 ## [1.0.0] - 2022-05-20
 
 Compared to 0.2.1
