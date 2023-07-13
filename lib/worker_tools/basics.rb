@@ -93,7 +93,7 @@ module WorkerTools
     private
 
     def run_mode
-      model.try(:options).try(:[], 'run_mode')
+      model.try(:options).try(:[], 'run_mode').try(:to_sym)
     end
 
     def run_mode_option
@@ -105,6 +105,7 @@ module WorkerTools
 
       method_name = "run_in_#{run_mode}_mode"
       return method_name.to_sym if respond_to?(method_name, true)
+      return :run if run_mode == :repeat # common fallback
 
       raise "Missing method #{method_name}"
     end

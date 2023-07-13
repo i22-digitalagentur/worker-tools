@@ -175,6 +175,15 @@ describe WorkerTools::Basics do
         err = assert_raises(StandardError) { importer.perform }
         assert_includes err.message, 'run_in_foo_mode'
       end
+
+      it 'uses run if run_mode for repeat is not present' do
+        import = create_import
+        import.update!(options: { run_mode: 'repeat' })
+        importer = Importer.new
+        importer.model = import
+        importer.expects(:run)
+        importer.perform
+      end
     end
   end
 
