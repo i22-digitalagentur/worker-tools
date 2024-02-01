@@ -121,4 +121,16 @@ describe WorkerTools::Recorder do
     log_content = File.open(File.join(log_path, filename)).read
     assert_includes log_content, 'Some Error'
   end
+
+  it 'makes sure that the directory exists' do
+    importer = StandAloneWithLogging.new
+    log_directory = File.join(test_tmp_path, 'foo')
+    log_file_name = 'test.log'
+    importer.stubs(:log_directory).returns(log_directory)
+    importer.stubs(:log_file_name).returns(log_file_name)
+    importer.add_log('something')
+
+    log_content = File.read(File.join(log_directory, log_file_name))
+    assert_includes log_content, 'something'
+  end
 end
