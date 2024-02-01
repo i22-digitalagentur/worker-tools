@@ -62,7 +62,10 @@ module WorkerTools
     end
 
     def logger
-      @logger ||= Logger.new(File.join(log_directory, log_file_name))
+      @logger ||= begin
+        FileUtils.mkdir_p(log_directory)
+        Logger.new(File.join(log_directory, log_file_name))
+      end
     end
 
     def log_directory
