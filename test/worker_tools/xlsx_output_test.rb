@@ -75,6 +75,68 @@ describe WorkerTools::XlsxOutput do
     end
   end
 
+  describe 'xlsx file output with number_format' do
+    class FooNumberFormat < FooXlsxOutput
+      def xlsx_output_column_headers
+        {
+          number: 'Number',
+          number_auto: 'Number Auto',
+          number_formatted: 'Number Formatted',
+          date: 'Date',
+          date_auto: 'Date Auto',
+          date_formatted: 'Date Formatted'
+        }
+      end
+
+      def xlsx_output_number_format
+        {
+          number_auto: :auto,
+          number_formatted: '0.00',
+          date_auto: :auto,
+          date_formatted: 'yyyy'
+        }
+      end
+
+      def xlsx_output_entries
+        date = DateTime.parse('2020-10-15T14:00:00Z').utc
+
+        [
+          {
+            number: 1.2345,
+            number_auto: 1.2345,
+            number_formatted: 1.2345,
+            date: date,
+            date_auto: date,
+            date_formatted: date
+          }
+        ]
+      end
+    end
+
+    def setup
+      @klass = FooNumberFormat.new
+    end
+
+    it 'formats the columns' do
+      @klass.xlsx_output_write_file
+      attachment = @klass.model.attachments.first
+      assert attachment
+      xlsx = Roo::Excelx.new(attachment.file.path)
+      sheet = xlsx.sheet(0)
+      assert sheet
+      # formatted value or sheet.row does not show us what excel ends up displaying
+      # but it help us to verify that the format changes.
+      # This is what my excel shows:
+      # 1.2345  1,2345  1,23  2020-10-15 14:00:00 UTC  44119,58333  2020
+      assert_equal sheet.formatted_value(2, 1), '1.2345'
+      assert_equal sheet.formatted_value(2, 2), '1'
+      assert_equal sheet.formatted_value(2, 3), '1.23'
+      assert_equal sheet.formatted_value(2, 4), '2020-10-15 14:00:00 UTC'
+      assert_equal sheet.formatted_value(2, 5), '44120'
+      assert_equal sheet.formatted_value(2, 6), '2020-10-15 00:00:00'
+    end
+  end
+
   describe 'xlsx file output with array - multi sheet' do
     class FooCorrectArrayMultiSheet < FooXlsxOutput
       def xlsx_output_content

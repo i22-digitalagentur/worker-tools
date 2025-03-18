@@ -1,5 +1,8 @@
 require 'rubyXL'
+require 'rubyXL/convenience_methods'
+
 module WorkerTools
+  # rubocop:disable Metrics/ModuleLength
   module XlsxOutput
     def xlsx_output_entries
       raise "xlsx_output_entries has to be defined in #{self}"
@@ -25,7 +28,8 @@ module WorkerTools
           label: 'Sheet 1',
           headers: xlsx_output_column_headers,
           rows: xlsx_output_entries.lazy.map { |entry| xlsx_output_row_values(entry) },
-          column_style: xlsx_output_column_format
+          column_style: xlsx_output_column_format,
+          number_format: xlsx_output_number_format
         }
       }
     end
@@ -48,6 +52,21 @@ module WorkerTools
       {}
     end
 
+    def xlsx_output_number_format
+      # set the cell number format for a given column
+      # number format also applies to dates, see the excel documentation:
+      #  https://support.microsoft.com/en-us/office/number-format-codes-in-excel-for-mac-5026bbd6-04bc-48cd-bf33-80f18b4eae68
+      #  https://www.rubydoc.info/gems/rubyXL/3.3.21/RubyXL/NumberFormats
+      #
+      # Ex:
+      # @xlsx_output_number_format ||= {
+      #   foo: :auto,
+      #   bar: '0.00',
+      #   # nothing for baz, it will go through `.to_s`
+      # }
+      {}
+    end
+
     def xlsx_output_insert_headers(spreadsheet, headers)
       return unless headers
 
@@ -62,13 +81,30 @@ module WorkerTools
       end
     end
 
-    def xlsx_output_insert_rows(spreadsheet, rows, headers)
+    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
+    def xlsx_output_insert_rows(spreadsheet, rows, headers, number_formats)
+      number_format_by_col_index = Hash(number_formats).each_with_object({}) do |(col, number_format), hash|
+        hash[headers.keys.index(col)] = number_format
+      end
+
       rows.each_with_index do |row, row_index|
         xlsx_output_iterators(row, headers).each_with_index do |value, col_index|
-          spreadsheet.add_cell(row_index + 1, col_index, value.to_s)
+          number_format = number_format_by_col_index[col_index]
+
+          case number_format
+          when :auto, 'auto'
+            spreadsheet.add_cell(row_index + 1, col_index, value)
+          when nil
+            spreadsheet.add_cell(row_index + 1, col_index, value.to_s)
+          else
+            spreadsheet.add_cell(row_index + 1, col_index, value).set_number_format(number_format)
+          end
         end
       end
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
 
     def xlsx_output_iterators(iterable, compare_hash = nil)
       if iterable.is_a? Hash
@@ -108,6 +144,7 @@ module WorkerTools
       )
     end
 
+    # rubocop:disable Metrics/AbcSize
     def xlsx_output_write_sheet(workbook, sheet_content, index)
       sheet = workbook.worksheets[index]
       sheet = workbook.add_worksheet(sheet_content[:label]) if sheet.nil?
@@ -115,8 +152,9 @@ module WorkerTools
       sheet.sheet_name = sheet_content[:label]
       xlsx_output_style_columns(sheet, sheet_content[:column_style], sheet_content[:headers])
       xlsx_output_insert_headers(sheet, sheet_content[:headers])
-      xlsx_output_insert_rows(sheet, sheet_content[:rows], sheet_content[:headers])
+      xlsx_output_insert_rows(sheet, sheet_content[:rows], sheet_content[:headers], sheet_content[:number_format])
     end
+    # rubocop:enable Metrics/AbcSize
 
     def xlsx_output_write_file
       book = RubyXL::Workbook.new
@@ -129,4 +167,5 @@ module WorkerTools
       xlsx_output_add_attachment
     end
   end
+  # rubocop:enable Metrics/ModuleLength
 end
