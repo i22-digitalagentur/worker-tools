@@ -349,6 +349,25 @@ class MyImporter
 end
 ```
 
+## MemoryUsage
+
+There is a memory usage wrapper that you can use to record the memory consumption of your worker tasks. The memory usage is recorded in megabytes and stored in `model.meta['memory_usage']`. The module uses the `get_process_mem` gem to measure memory usage before and after the task execution.
+
+```ruby
+class MyImporter
+  include WorkerTools::MemoryUsage
+  wrappers :memory_usage
+
+  def run
+    # do stuff that consumes memory
+  end
+
+  # ..
+end
+```
+
+The memory usage will be automatically recorded in the model's meta attribute as `memory_usage` with the value in megabytes (rounded to 2 decimal places). The measurement represents the difference in memory usage before and after the task execution.
+
 ## Module 'Notes'
 
 If you use ActiveRecord you may need to modify the serializer as well as deserializer from the note attribute. After that you can easily serialize hashes and array of hashes with indifferent access. For that purpose the gem provides two utility methods. (HashWithIndifferentAccessType, SerializedArrayType). There is an example of how you can use it.

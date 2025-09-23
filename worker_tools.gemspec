@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'activesupport'
+  spec.add_dependency 'get_process_mem'
   spec.add_dependency 'roo'
   spec.add_dependency 'rubyXL'
   spec.add_dependency 'slack-notifier'
