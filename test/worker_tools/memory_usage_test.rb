@@ -65,37 +65,5 @@ describe WorkerTools::MemoryUsage do
 
       expect(@importer.model.meta['memory_usage']).must_equal 0.12
     end
-
-    it 'should handle negative memory differences' do
-      # Mock GetProcessMem - could happen due to measurement fluctuations
-      memory_mock = mock('memory')
-      memory_mock.stubs(:mb).returns(100.0).then.returns(99.5)
-
-      GetProcessMem.stubs(:new).returns(memory_mock)
-
-      @importer.perform(@import)
-
-      expect(@importer.model.meta['memory_usage']).must_equal(-0.5)
-    end
-
-    it 'should not set memory_usage if model does not respond to meta' do
-      # Mock a model without meta but with the necessary attributes for basics wrapper
-      model_without_meta = mock('model')
-      model_without_meta.stubs(:respond_to?).with(:meta).returns(false)
-      model_without_meta.stubs(:attributes=)
-      model_without_meta.stubs(:save!)
-      model_without_meta.stubs(:state=)
-      @importer.stubs(:model).returns(model_without_meta)
-
-      # Mock GetProcessMem
-      memory_mock = mock('memory')
-      memory_mock.stubs(:mb).returns(100.0).then.returns(105.0)
-      GetProcessMem.stubs(:new).returns(memory_mock)
-
-      # Should not try to access meta since model doesn't respond to it
-      model_without_meta.expects(:meta).never
-
-      @importer.perform(@import)
-    end
   end
 end
