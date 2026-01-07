@@ -84,6 +84,7 @@ class Import < ApplicationRecord
     complete_with_warnings
     failed
     running
+    empty
   ].map { |e| [e, e] }.to_h
 
   enum kind: { foo: 0, bar: 1 }
@@ -98,6 +99,8 @@ class Import < ApplicationRecord
 The state `complete` and `failed` are used by the modules. Both `state` and `kind` could be an enum or just a string field. Whether you have one, none or many attachments, and which library you use to handle it's up to you.
 
 The state `complete_with_warnings` indicates that the model contains notes that did not lead to a failure but should get some attention. By default those levels are `warning` and `errors` and can be customized.
+
+The state `empty` is automatically set by the CSV and XLSX input modules when the input file does not exist or is empty (0 bytes). When this state is set, a note with level `:info` is added to the model with a descriptive message ("The file does not exist" or "The file is empty").
 
 In this case the migration would be something like this:
 
