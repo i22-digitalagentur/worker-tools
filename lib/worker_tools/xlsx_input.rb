@@ -142,8 +142,18 @@ module WorkerTools
       true
     end
 
+    def xlsx_input_empty_file_check(xlsx_rows_enum)
+      return if !xlsx_input_headers_present && xlsx_rows_enum.first.present?
+      return if xlsx_input_headers_present && xlsx_rows_enum.drop(1).first.present?
+
+      raise Errors::EmptyFile
+    end
+
     def xlsx_input_foreach
       @xlsx_input_foreach ||= begin
+        #raise Errors::EmptyFile if File.zero?(xlsx_input_file_path)
+
+        xlsx_input_empty_file_check(xlsx_rows_enum)
         xlsx_input_columns_check(xlsx_rows_enum)
 
         XlsxInputForeach.new(

@@ -149,7 +149,7 @@ module WorkerTools
       return if !csv_input_headers_present && csv_rows_enum.first.present?
       return if csv_input_headers_present && csv_rows_enum.drop(1).first.present?
 
-      raise Errors::EmptyFile, 'The file is empty'
+      raise Errors::EmptyFile
     end
 
     def csv_input_foreach
