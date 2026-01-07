@@ -145,16 +145,14 @@ module WorkerTools
       true
     end
 
-    def csv_input_empty_file_check(csv_rows_enum)
-      return if !csv_input_headers_present && csv_rows_enum.first.present?
-      return if csv_input_headers_present && csv_rows_enum.drop(1).first.present?
-
-      raise Errors::EmptyFile
+    def csv_input_file_presence_check
+      raise Errors::EmptyFile, 'The file does not exist' unless File.exist?(csv_input_file_path)
+      raise Errors::EmptyFile, 'The file is empty' if File.zero?(csv_input_file_path)
     end
 
     def csv_input_foreach
       @csv_input_foreach ||= begin
-        csv_input_empty_file_check(csv_rows_enum)
+        csv_input_file_presence_check
         csv_input_columns_check(csv_rows_enum)
 
         CsvInputForeach.new(
