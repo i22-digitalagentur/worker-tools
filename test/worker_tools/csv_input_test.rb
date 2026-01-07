@@ -165,5 +165,11 @@ describe WorkerTools::CsvInput do
       err = assert_raises(WorkerTools::Errors::EmptyFile) { @klass.csv_input_foreach }
       assert_equal 'The file is empty', err.message
     end
+
+    it 'should raise EmptyFile error when file has only headers' do
+      @klass.stubs(:csv_input_file_path).returns(test_gem_path + '/test/fixtures/only_headers.csv')
+      err = assert_raises(WorkerTools::Errors::EmptyFile) { @klass.csv_input_foreach }
+      assert_equal 'The file is empty', err.message
+    end
   end
 end
