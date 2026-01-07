@@ -57,6 +57,8 @@ module WorkerTools
     # rubocop:disable Lint/RescueException
     rescue Exception => e
       # rubocop:enable Lint/RescueException
+      return handle_empty_file(e) if e.is_a?(WorkerTools::Errors::EmptyFile)
+
       save_state_without_validate('failed')
       raise unless silent_error?(e)
     end
@@ -88,6 +90,12 @@ module WorkerTools
       error.is_a?(WorkerTools::Errors::Silent)
       # or add your list
       # [WorkerTools::Errors::Silent, SomeOtherError].any? { |k| e.is_a?(k) }
+    end
+
+    def handle_empty_file(error)
+      model.notes << { level: :info, message: error.message }
+      model.state = 'empty'
+      model.save!(validate: false)
     end
 
     private

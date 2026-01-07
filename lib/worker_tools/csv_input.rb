@@ -147,6 +147,8 @@ module WorkerTools
 
     def csv_input_foreach
       @csv_input_foreach ||= begin
+        raise Errors::EmptyFile, 'The file is empty' if csv_rows_enum.first.nil?
+
         csv_input_columns_check(csv_rows_enum)
 
         CsvInputForeach.new(

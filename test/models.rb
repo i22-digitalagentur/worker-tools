@@ -5,6 +5,7 @@ class Import < ActiveRecord::Base
     complete_with_warnings
     failed
     running
+    empty
   ].map { |e| [e, e] }.to_h
 
   attr_accessor :attachments

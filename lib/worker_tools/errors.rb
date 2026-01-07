@@ -6,5 +6,6 @@ module WorkerTools
     WrongNumberOfColumns = Class.new(Silent)
     DuplicatedColumns = Class.new(Silent)
     MissingColumns = Class.new(Silent)
+    EmptyFile = Class.new(Silent)
   end
 end
