@@ -140,10 +140,6 @@ describe WorkerTools::Basics do
 
       import.reload
       assert import.empty?
-      assert_equal 1, import.notes.length
-      note = import.notes.first.with_indifferent_access
-      assert_equal 'info', note[:level].to_s
-      assert_includes note[:message], error_message
     end
 
     it 'sets the model to running state and clears notes and meta' do

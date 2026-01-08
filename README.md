@@ -100,7 +100,7 @@ The state `complete` and `failed` are used by the modules. Both `state` and `kin
 
 The state `complete_with_warnings` indicates that the model contains notes that did not lead to a failure but should get some attention. By default those levels are `warning` and `errors` and can be customized.
 
-The state `empty` is automatically set by the CSV and XLSX input modules when the input file does not exist or is empty (0 bytes). When this state is set, a note with level `:info` is added to the model with a descriptive message ("The file does not exist" or "The file is empty").
+The state `empty` is automatically set by the CSV and XLSX input modules when the input file does not exist or is empty (0 bytes).
 
 In this case the migration would be something like this:
 
