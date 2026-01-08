@@ -202,6 +202,22 @@ See all methods in [slack_error_notifier](/lib/worker_tools/slack_error_notifier
 
 See all methods in [csv_input](/lib/worker_tools/csv_input.rb)
 
+### Skipping File Presence Check
+
+By default, the CSV Input module checks if the file exists and is not empty. If you need to skip this validation (for example, if an empty file is valid for your process), you can override the `csv_input_file_presence_check` method:
+
+```ruby
+class CsvInputExample
+  include WorkerTools::CsvInput
+
+  def csv_input_file_presence_check
+    true
+  end
+
+  # ... rest of your implementation
+end
+```
+
 ## Module CSV Output
 
 See all methods in [csv_output](/lib/worker_tools/csv_output.rb)
