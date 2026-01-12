@@ -171,5 +171,24 @@ describe WorkerTools::CsvInput do
       err = assert_raises(WorkerTools::Errors::EmptyFile) { @klass.csv_input_foreach }
       assert_equal 'The file is empty', err.message
     end
+
+    it 'should raise MissingColumns when the file is empty
+        and csv_input_file_presence_check is overridden
+        and the headers are defined' do
+      @klass.stubs(:csv_input_file_path).returns(test_gem_path + '/test/fixtures/empty_file')
+      @klass.stubs(:csv_input_file_presence_check).returns(true)
+      err = assert_raises(WorkerTools::Errors::MissingColumns) { @klass.csv_input_foreach }
+      assert_equal 'The headers are missing', err.message
+    end
+
+    it 'should not raise any error when the file is empty
+        and csv_input_file_presence_check is overridden
+        and the headers are not defined' do
+      klass = FooWithoutHeaders.new
+      klass.stubs(:csv_input_file_path).returns(test_gem_path + '/test/fixtures/empty_file')
+      klass.stubs(:csv_input_file_presence_check).returns(true)
+      content = klass.csv_input_foreach.to_a
+      assert_equal [], content
+    end
   end
 end

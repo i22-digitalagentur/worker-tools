@@ -59,6 +59,8 @@ module WorkerTools
     end
 
     def csv_input_columns_array_check(csv_rows_enum)
+      return if csv_rows_enum.first.nil?
+
       expected_columns_length = csv_input_columns.length
       actual_columns_length = csv_rows_enum.first.length
       return if expected_columns_length == actual_columns_length
@@ -68,6 +70,8 @@ module WorkerTools
     end
 
     def csv_input_columns_hash_check(csv_rows_enum)
+      raise Errors::MissingColumns, 'The headers are missing' if csv_rows_enum.first.nil?
+
       expected_names = csv_input_columns.values
       filtered_actual_names = csv_rows_enum.first.map { |n| csv_input_header_normalized(n) }
       csv_input_columns_hash_check_duplicates(filtered_actual_names)
