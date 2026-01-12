@@ -57,7 +57,9 @@ module WorkerTools
     # rubocop:disable Lint/RescueException
     rescue Exception => e
       # rubocop:enable Lint/RescueException
-      save_state_without_validate('failed')
+      state = e.is_a?(WorkerTools::Errors::EmptyFile) ? 'empty' : 'failed'
+      save_state_without_validate(state)
+
       raise unless silent_error?(e)
     end
 

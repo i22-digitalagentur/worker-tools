@@ -131,6 +131,17 @@ describe WorkerTools::Basics do
       assert import.failed?
     end
 
+    it 'sets the model to empty state when EmptyFile error is raised' do
+      import = create_import
+      importer = Importer.new
+      error_message = 'The file is empty'
+      importer.expects(:run).raises(WorkerTools::Errors::EmptyFile, error_message)
+      importer.perform(import)
+
+      import.reload
+      assert import.empty?
+    end
+
     it 'sets the model to running state and clears notes and meta' do
       import = create_import
       import.notes = [{ level: 'info', message: 'some message' }]

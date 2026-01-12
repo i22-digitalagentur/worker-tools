@@ -142,8 +142,14 @@ module WorkerTools
       true
     end
 
+    def xlsx_input_file_presence_check
+      raise Errors::EmptyFile, 'The file does not exist' unless File.exist?(xlsx_input_file_path)
+      raise Errors::EmptyFile, 'The file is empty' if File.zero?(xlsx_input_file_path)
+    end
+
     def xlsx_input_foreach
       @xlsx_input_foreach ||= begin
+        xlsx_input_file_presence_check
         xlsx_input_columns_check(xlsx_rows_enum)
 
         XlsxInputForeach.new(

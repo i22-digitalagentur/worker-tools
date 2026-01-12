@@ -84,6 +84,7 @@ class Import < ApplicationRecord
     complete_with_warnings
     failed
     running
+    empty
   ].map { |e| [e, e] }.to_h
 
   enum kind: { foo: 0, bar: 1 }
@@ -98,6 +99,8 @@ class Import < ApplicationRecord
 The state `complete` and `failed` are used by the modules. Both `state` and `kind` could be an enum or just a string field. Whether you have one, none or many attachments, and which library you use to handle it's up to you.
 
 The state `complete_with_warnings` indicates that the model contains notes that did not lead to a failure but should get some attention. By default those levels are `warning` and `errors` and can be customized.
+
+The state `empty` is automatically set by the CSV and XLSX input modules when the input file does not exist or is empty (0 bytes).
 
 In this case the migration would be something like this:
 
@@ -198,6 +201,22 @@ See all methods in [slack_error_notifier](/lib/worker_tools/slack_error_notifier
 ## Module CSV Input
 
 See all methods in [csv_input](/lib/worker_tools/csv_input.rb)
+
+### Skipping File Presence Check
+
+By default, the CSV Input module checks if the file exists and is not empty. If you need to skip this validation (for example, if an empty file is valid for your process), you can override the `csv_input_file_presence_check` method:
+
+```ruby
+class CsvInputExample
+  include WorkerTools::CsvInput
+
+  def csv_input_file_presence_check
+    true
+  end
+
+  # ... rest of your implementation
+end
+```
 
 ## Module CSV Output
 

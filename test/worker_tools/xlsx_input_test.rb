@@ -153,5 +153,17 @@ describe WorkerTools::XlsxInput do
       assert_equal ({ 'col_1' => 'cell_1.1', 'col_2' => 'cell_1.2', 'col_3' => 'cell_1.3' }), content.first
       assert_equal ({ 'col_1' => 'cell_2.1', 'col_2' => 'cell_2.2', 'col_3' => 'cell_2.3' }), content.second
     end
+
+    it 'should raise EmptyFile error when file does not exist' do
+      @klass.stubs(:xlsx_input_file_path).returns(test_gem_path + '/test/fixtures/nonexistent_file.xlsx')
+      err = assert_raises(WorkerTools::Errors::EmptyFile) { @klass.xlsx_input_foreach }
+      assert_equal 'The file does not exist', err.message
+    end
+
+    it 'should raise EmptyFile error when file is empty (0 bytes)' do
+      @klass.stubs(:xlsx_input_file_path).returns(test_gem_path + '/test/fixtures/empty_file')
+      err = assert_raises(WorkerTools::Errors::EmptyFile) { @klass.xlsx_input_foreach }
+      assert_equal 'The file is empty', err.message
+    end
   end
 end
